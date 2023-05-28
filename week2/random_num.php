@@ -6,31 +6,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>exercise1</title>
-</head>
 
-<style>
-    .line1 {
-        color: green;
-        font-style: italic;
-        font-weight: normal;
-    }
 
-    .line2 {
-        color: blue;
-        font-style: italic;
-        font-weight: normal;
-    }
+    <style>
+        .line1 {
+            color: green;
+            font-style: italic;
+            font-weight: normal;
+        }
 
-    .line3 {
-        color: red;
-        font-weight: bold;
-    }
+        .line2 {
+            color: blue;
+            font-style: italic;
+            font-weight: normal;
+        }
 
-    .line4 {
-        font-style: italic;
-        font-weight: bold;
-    }
-</style>
+        .line3 {
+            color: red;
+            font-weight: bold;
+        }
+
+        .line4 {
+            font-style: italic;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
