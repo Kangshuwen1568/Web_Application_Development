@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
-        .orange {
+        .color {
             color: rgb(189, 134, 90);
         }
     </style>
@@ -18,7 +18,7 @@
         <div class="fs-1">
             <?php
             $date = date('M d, Y (l)');
-            $Month = "<span class='orange'>" . date('M') . "</span>";
+            $Month = "<span class='color'>" . date('M') . "</span>";
             $Date = substr($date, 3);
             echo "<strong>$Month$Date</strong>";
 
