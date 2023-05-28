@@ -13,7 +13,7 @@
 
 <body>
     <div class="container mt-5">
-        <!-- heading name -->
+
         <div class="fs-1">
             <strong>What is your date of birth?</strong>
         </div>
