@@ -12,7 +12,7 @@
 <body>
     <div class="container mt-5">
         <h1>Name Form</h1>
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+        <form method="post" action="">
             <div class="mb-1">
                 <label for="firstname" class="form-label">First Name</label>
                 <input type="text" class="form-control" id="firstname" name="firstname" required>
@@ -24,7 +24,7 @@
             <button type="submit" class="btn btn-primary" name="submit">Submit</button>
         </form>
         <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['submit'])) {
             $firstName = $_POST["firstname"];
             $lastName = $_POST["lastname"];
 
