@@ -29,7 +29,7 @@
             $firstnumber = $_POST["firstnumber"];
             $lastnumber = $_POST["lastnumber"];
 
-            if (!is_numeric($lastnumber) || !is_numeric($lastnumber)) {
+            if (!is_numeric($firstnumber) || !is_numeric($lastnumber)) {
                 echo '<div class="alert alert-danger" role="alert">Please fill in a number.</div>';
             } else {
                 $sum = $firstnumber + $lastnumber;
