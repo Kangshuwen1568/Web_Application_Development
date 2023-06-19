@@ -111,6 +111,7 @@
             $password = $_POST['password'];
             $confirm_password = $_POST['confirm_password'];
             $email = $_POST['email'];
+            $errors = [];
 
             if (empty($firstname)) {
                 $errors[] = "Firstname is required.";
