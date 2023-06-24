@@ -67,19 +67,46 @@
             if (checkdate($months, $day, $year)) {
                 $zodiac = array(
                     "Rat", "Cow", "Tiger", "Rabbit", "Dragon", "Snake",
-                    "Horse", "Sheep", "Monkey", "Chicken", "Dog", "Pig"
+                    "Horse", "Goat", "Monkey", "Chicken", "Dog", "Pig"
                 );
 
                 $calculate_zodiac = ($year - 1900) % 12;
                 $Chinese_zodiac = $zodiac[$calculate_zodiac];
 
+                /**/
+                $constellation = "";
 
+                if (($months == 3 && $day >= 21) || ($months == 4 && $day <= 19)) {
+                    $constellation = "Aries";
+                } elseif (($months == 4 && $day >= 20) || ($months == 5 && $day <= 20)) {
+                    $constellation = "Taurus";
+                } elseif (($months == 5 && $day >= 21) || ($months == 6 && $day <= 20)) {
+                    $constellation = "Gemini";
+                } elseif (($months == 6 && $day >= 21) || ($months == 7 && $day <= 22)) {
+                    $constellation = "Cancer";
+                } elseif (($months == 7 && $day >= 23) || ($months == 8 && $day <= 22)) {
+                    $constellation = "Leo";
+                } elseif (($months == 8 && $day >= 23) || ($months == 9 && $day <= 22)) {
+                    $constellation = "Virgo";
+                } elseif (($months == 9 && $day >= 23) || ($months == 10 && $day <= 22)) {
+                    $constellation = "Librav";
+                } elseif (($months == 10 && $day >= 23) || ($months == 11 && $day <= 21)) {
+                    $constellation = "Scorpio";
+                } elseif (($months == 11 && $day >= 22) || ($months == 12 && $day <= 21)) {
+                    $constellation = "Sagittarius";
+                } elseif (($months == 12 && $day >= 22) || ($months == 1 && $day <= 19)) {
+                    $constellation = "Capricorn";
+                } elseif (($months == 1 && $day >= 20) || ($months == 2 && $day <= 18)) {
+                    $constellation = "Aquarius";
+                } elseif (($months == 2 && $day >= 19) || ($months == 3 && $day <= 20)) {
+                    $constellation = "Pisces";
+                }
 
                 echo "<p>Date of Birth: $day /" . $months . "/ $year</p>";
                 echo "<p>Zodiac sign: $Chinese_zodiac</p>";
-                //echo "<p>Zodiac constellation: $constellation</p>";
+                echo "<p>Zodiac constellation: $constellation</p>";
             } else {
-                echo "Please select the valid date.";
+                echo "<p>Please select the valid date.</p>";
             }
         }
         ?>
