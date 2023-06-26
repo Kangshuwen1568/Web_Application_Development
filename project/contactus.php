@@ -1,0 +1,135 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- navbar -->
+        <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="home.php">CRUD Exercise</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="home.php">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="product_create.php">Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="customer.php">Customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contactus.php">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container page-header">
+            <h1>Contact Us</h1>
+        </div>
+
+        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST">
+            <table class='table table-hover table-responsive table-bordered'>
+                <tr>
+                    <td>Name</td>
+                    <td><input type='text' name='name' class='form-control' /></td>
+                </tr>
+                <tr>
+                    <td>Message</td>
+                    <td><textarea name='message' class='form-control' rows='10' cols='30'></textarea></td>
+                </tr>
+
+                <tr>
+                    <td>Phone Number</td>
+                    <td><input type='text' name='phonenumber' class='form-control' /></td>
+                </tr>
+
+                <td></td>
+                <td>
+                    <input type='submit' value='Save' class='btn btn-primary' />
+                    <a href='index.php' class='btn btn-danger'>Back to read products</a>
+                </td>
+                </tr>
+            </table>
+        </form>
+
+        <!-- PHP insert code will be here -->
+        <?php
+        if ($_POST) {
+            // include database connection
+            include 'config/database.php';
+
+            $name = $_POST['name'];
+            $message = $_POST['message'];
+            $phonenumber = $_POST['phonenumber'];
+
+            // initialize an array to store error messages
+            $errors = array();
+
+            // check name field is empty
+            if (empty($name)) {
+                $errors[] = "Name is required.";
+            }
+
+            // check description field is empty
+            if (empty($message)) {
+                $errors[] = "Message is required.";
+            }
+
+            // check price field is empty
+            if (empty($phonenumber)) {
+                $errors[] = "Phone Number is required.";
+            }
+
+            // check if any errors occurred
+            if (!empty($errors)) {
+                $errorMessage = "<div class='alert alert-danger'>";
+                // display out the error messages
+                foreach ($errors as $error) {
+                    $errorMessage .= $error . "<br>";
+                }
+                $errorMessage .= "</div>";
+                echo $errorMessage;
+            } else {
+                try {
+                    // insert query
+                    $query = "INSERT INTO contactus SET name=:name, message=:message, phonenumber=:phonenumber";
+                    // prepare query for execution
+                    $stmt = $con->prepare($query);
+
+                    // bind the parameters
+                    $stmt->bindParam(':name', $name);
+                    $stmt->bindParam(':message', $message);
+                    $stmt->bindParam(':phonenumber', $phonenumber);
+
+                    // Execute the query
+                    if ($stmt->execute()) {
+                        echo "<div class='alert alert-success'>Record was saved.</div>";
+                    } else {
+                        echo "<div class='alert alert-danger'>Unable to save record.</div>";
+                    }
+                }
+                // show error
+                catch (PDOException $exception) {
+                    die('ERROR: ' . $exception->getMessage());
+                }
+            }
+        }
+
+        ?>
+    </div>
+
+</body>
+
+</html>
