@@ -185,6 +185,7 @@
                     } else {
                         $placeName = "Not Found";
                     }
+
                     echo "<p>Your ic number is: $ic</p>";
                     echo "Date of Birth: $dayObrith {$month[$monthObirth - 1]} $yearObirth<br>";
                     echo "Zodiac Sign: $zodiac <img src='img/" . strtolower($zodiac) . ".png' alt='$zodiac'><br>";
