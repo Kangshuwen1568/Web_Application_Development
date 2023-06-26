@@ -23,6 +23,14 @@
         <?php
         if (isset($_POST['submit'])) {
             $ic = $_POST['ic'];
+            //^: It denotes the start of the string.
+            //[0-9]: It matches any digit.
+            //{6}: It specifies that the previous pattern (digit) should occur exactly 6 times.
+            //-: It matches a hyphen character.
+            //{2}: It specifies that the previous pattern (digit) should occur exactly 2 times.
+            //-: It matches a hyphen character.
+            //{4}: It specifies that the previous pattern (digit) should occur exactly 4 times.
+            //$: It denotes the end of the string.
             $ICPattern = "/^[0-9]{6}-[0-9]{2}-[0-9]{4}$/";
             $month = array(
                 "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
@@ -33,10 +41,12 @@
                 $dayObrith = substr($ic, 4, 2);
                 $monthObirth = substr($ic, 2, 2);
                 $yearObirth = substr($ic, 0, 2);
-
+                //
                 if (($yearObirth + 2000) > date('Y')) {
+                    //年份是99=2099，大过currentyear，改成1900年+99=1999年
                     $yearObirth += 1900;
                 } else {
+                    //(年份是01+2000=2001)小过currentyear，改成2000年+01=2001
                     $yearObirth += 2000;
                 }
 
@@ -45,7 +55,18 @@
                     $zodiac = "";
                     $zodiacImage = "";
 
-                    if ($yearObirth % 12 === 4) {
+                    if ($yearObirth % 12 === 0) {
+                        $zodiac = "Monkey";
+                        $zodiacImage = "img/monkey.png";
+                    } else if ($yearObirth % 12 === 1) {
+                        $zodiac = "Rooster";
+                        $zodiacImage = "img/rooster.png";
+                    } else if ($yearObirth % 12 === 2) {
+                        $zodiac = "Dog";
+                    } else if ($yearObirth % 12 === 3) {
+                        $zodiac = "Pig";
+                        $zodiacImage = "img/pig.png";
+                    } else if ($yearObirth % 12 === 4) {
                         $zodiac = "Rat";
                         $zodiacImage = "img/rat.png";
                     } else if ($yearObirth % 12 === 5) {
@@ -57,7 +78,7 @@
                     } else if ($yearObirth % 12 === 7) {
                         $zodiac = "Rabbit";
                         $zodiacImage = "img/rabbit.png";
-                    } else if ($yearObirth % 12 === 8) {
+                    } else if ($yearObirth % 12 === 8) {    //2000year除12 余数8
                         $zodiac = "Dragon";
                         $zodiacImage = "img/dragon.png";
                     } else if ($yearObirth % 12 === 9) {
@@ -69,18 +90,6 @@
                     } else if ($yearObirth % 12 === 11) {
                         $zodiac = "Goat";
                         $zodiacImage = "img/goat.png";
-                    } else if ($yearObirth % 12 === 0) {
-                        $zodiac = "Monkey";
-                        $zodiacImage = "img/monkey.png";
-                    } else if ($yearObirth % 12 === 1) {
-                        $zodiac = "Rooster";
-                        $zodiacImage = "img/rooster.png";
-                    } else if ($yearObirth % 12 === 2) {
-                        $zodiac = "Dog";
-                        $zodiacImage = "img/dog.png";
-                    } else if ($yearObirth % 12 === 3) {
-                        $zodiac = "Pig";
-                        $zodiacImage = "img/pig.png";
                     }
 
                     $constellation = "";
@@ -124,8 +133,7 @@
                         $constellationImage = "img/capricorn.png";
                     }
 
-                    $placeOfBirth = substr($ic, 7, -5);
-
+                    $placeOfBirth = substr($ic, 7, -5); //ic从0算起第7个，-5从后面算起
                     if ($placeOfBirth === "01" || $placeOfBirth === "21"  || $placeOfBirth === "22"  || $placeOfBirth === "23" || $placeOfBirth === "24") {
                         $placeName = "Johor";
                         $placeFlag = "img/johor.jpg";
@@ -177,8 +185,6 @@
                     } else {
                         $placeName = "Not Found";
                     }
-
-
                     echo "<p>Your ic number is: $ic</p>";
                     echo "Date of Birth: $dayObrith {$month[$monthObirth - 1]} $yearObirth<br>";
                     echo "Zodiac Sign: $zodiac <img src='img/" . strtolower($zodiac) . ".png' alt='$zodiac'><br>";
@@ -191,8 +197,6 @@
                 echo '<p>Invalid IC number. </p>';
             }
         }
-
-
         ?>
     </div>
 
