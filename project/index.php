@@ -22,8 +22,6 @@
             </div>
             <p>Here is the E-commerce home page.</p>
         </div>
-        <!--https://getbootstrap.com/docs/5.3/components/navbar/-->
-        <!--https://getbootstrap.com/docs/5.3/content/images/-->
 
 
         <!-- PHP insert code will be here -->
@@ -37,3 +35,7 @@
 </body>
 
 </html>
+<!--https://getbootstrap.com/docs/5.3/components/navbar/-->
+<!--https://getbootstrap.com/docs/5.3/content/images/-->
+
+<!--https://getbootstrap.com/docs/5.3/getting-started/introduction/-->
