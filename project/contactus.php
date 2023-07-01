@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Contact Us</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </head>
@@ -11,30 +11,10 @@
 <body>
     <div class="container">
         <!-- navbar -->
-        <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="home.php">CRUD Exercise</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="home.php">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="product_create.php">Product</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="customer.php">Customer</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="contactus.php">Contact Us</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <?php
+        include 'navbar.php';
+        ?>
+
         <div class="container page-header">
             <h1>Contact Us</h1>
         </div>
@@ -51,6 +31,11 @@
                 </tr>
 
                 <tr>
+                    <td>Email</td>
+                    <td><input type='email' name='email' class='form-control' placeholder='name@email.com' /></td>
+                </tr>
+
+                <tr>
                     <td>Phone Number</td>
                     <td><input type='text' name='phonenumber' class='form-control' /></td>
                 </tr>
@@ -58,7 +43,6 @@
                 <td></td>
                 <td>
                     <input type='submit' value='Save' class='btn btn-primary' />
-                    <a href='index.php' class='btn btn-danger'>Back to read products</a>
                 </td>
                 </tr>
             </table>
@@ -72,6 +56,7 @@
 
             $name = $_POST['name'];
             $message = $_POST['message'];
+            $email = $_POST['email'];
             $phonenumber = $_POST['phonenumber'];
 
             // initialize an array to store error messages
@@ -82,12 +67,17 @@
                 $errors[] = "Name is required.";
             }
 
-            // check description field is empty
+            // check message field is empty
             if (empty($message)) {
                 $errors[] = "Message is required.";
             }
 
-            // check price field is empty
+            // check email field is empty
+            if (empty($email)) {
+                $errors[] = "Email is required.";
+            }
+
+            // check phonenumber field is empty
             if (empty($phonenumber)) {
                 $errors[] = "Phone Number is required.";
             }
@@ -104,13 +94,14 @@
             } else {
                 try {
                     // insert query
-                    $query = "INSERT INTO contactus SET name=:name, message=:message, phonenumber=:phonenumber";
+                    $query = "INSERT INTO contactus SET name=:name, message=:message, email=:email, phonenumber=:phonenumber";
                     // prepare query for execution
                     $stmt = $con->prepare($query);
 
                     // bind the parameters
                     $stmt->bindParam(':name', $name);
                     $stmt->bindParam(':message', $message);
+                    $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':phonenumber', $phonenumber);
 
                     // Execute the query
