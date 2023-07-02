@@ -15,7 +15,7 @@
         <?php
         include 'navbar.php';
         ?>
-        <div class="container page-header">
+        <div class="container">
             <h1>Create Product</h1>
         </div>
 
