@@ -31,8 +31,9 @@
             $lastname = $_POST['lastname'];
             $gender = $_POST['gender'];
             $date_of_birth = $_POST['date_of_birth'];
+            $email = $_POST['email'];
             $account_status = $_POST['account_status'];
-
+            date_default_timezone_set('asia/Kuala_Lumpur');
             // initialize an array to store error messages
             $errors = array();
 
@@ -74,6 +75,15 @@
                 $errors[] = "Date of birth is required.";
             }
 
+            // check email field is empty
+            if (empty($email)) {
+                $errors[] = "Email is required.";
+            } else {
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = "Invalid email format.";
+                }
+            }
+
             // check account status field is empty
             if (empty($account_status)) {
                 $errors[] = "Account status is required.";
@@ -91,7 +101,7 @@
             } else {
                 try {
                     // insert query
-                    $query = "INSERT INTO customers SET username=:username, password=:password, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=:date_of_birth, registration=:registration, account_status=:account_status";
+                    $query = "INSERT INTO customers SET username=:username, password=:password, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=:date_of_birth, email=:email, registration=:registration, account_status=:account_status";
                     // prepare query for execution
                     $stmt = $con->prepare($query);
 
@@ -102,6 +112,7 @@
                     $stmt->bindParam(':lastname', $lastname);
                     $stmt->bindParam(':gender', $gender);
                     $stmt->bindParam(':date_of_birth', $date_of_birth);
+                    $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':account_status', $account_status);
 
                     $registration = date('Y-m-d H:i:s'); // get the current date and time
@@ -170,6 +181,11 @@
                 <tr>
                     <td>Date of Birth</td>
                     <td><input type='date' name='date_of_birth' class='form-control' value="<?php echo isset($_POST['date_of_birth']) ? $_POST['date_of_birth'] : ''; ?>" /></td>
+                </tr>
+
+                <tr>
+                    <td>Email</td>
+                    <td><input type="email" name="email" id="email" class="form-control"></td>
                 </tr>
 
                 <tr>
