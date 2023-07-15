@@ -16,7 +16,7 @@
                     <a class="nav-link" href="customer_create.php">Customer</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="contactus.php">Contact Us</a>
+                    <a class="nav-link" href="contact_form.php">Contact</a>
                 </li>
             </ul>
         </div>

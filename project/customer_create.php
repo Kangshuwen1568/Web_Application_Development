@@ -30,9 +30,7 @@
             $firstname = $_POST['firstname'];
             $lastname = $_POST['lastname'];
             $gender = $_POST['gender'];
-            $date_day = $_POST['date_day'];
-            $date_month = $_POST['date_month'];
-            $date_year = $_POST['date_year'];
+            $date_of_birth = $_POST['date_of_birth'];
             $account_status = $_POST['account_status'];
 
             // initialize an array to store error messages
@@ -68,17 +66,17 @@
 
             // check gender field is empty
             if (empty($gender)) {
-                $errors[] = "Please select a gender.";
+                $errors[] = "Gender is required.";
             }
 
             // check date field is empty
-            if (empty($date_day) || empty($date_month) || empty($date_year)) {
-                $errors[] = "Please select a date of birth.";
+            if (empty($date_of_birth)) {
+                $errors[] = "Date of birth is required.";
             }
 
             // check account status field is empty
             if (empty($account_status)) {
-                $errors[] = "Please select a account status.";
+                $errors[] = "Account status is required.";
             }
 
             // check if any errors occurred
@@ -103,10 +101,7 @@
                     $stmt->bindParam(':firstname', $firstname);
                     $stmt->bindParam(':lastname', $lastname);
                     $stmt->bindParam(':gender', $gender);
-
-                    $date_of_birth = $date_year . '-' . $date_month . '-' . $date_day; // Define the $date_of_birth variable
                     $stmt->bindParam(':date_of_birth', $date_of_birth);
-
                     $stmt->bindParam(':account_status', $account_status);
 
                     $registration = date('Y-m-d H:i:s'); // get the current date and time
@@ -121,7 +116,12 @@
                 }
                 // show error
                 catch (PDOException $exception) {
-                    die('ERROR: ' . $exception->getMessage());
+                    //die('ERROR: ' . $exception->getMessage());
+                    if ($exception->getCode() == 23000) {
+                        echo '<div class= "alert alert-danger role=alert">' . 'Username has been taken' . '</div>';
+                    } else {
+                        echo '<div class= "alert alert-danger role=alert">' . $exception->getMessage() . '</div>';
+                    }
                 }
             }
         }
@@ -129,107 +129,64 @@
 
         <!-- html form here where the product information will be entered -->
         <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST">
-            <!--<table class='table table-hover table-responsive table-bordered'>-->
+            <table class='table table-hover table-responsive table-bordered'>
 
-            <div class="mb-3">
-                <label for="username" class="form-label">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
-                <div class="form-text">Minimum 6 characters, starting with a letter, and only _ or - is allowed in between.</div>
-            </div>
+                <tr>
+                    <td>Username</td>
+                    <td><input type="text" name="username" id="username" class="form-control" /></td>
+                </tr>
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="password" name="password">
-                <div class="form-text">Minimum 6 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number. No symbols allowed.</div>
-            </div>
+                <tr>
+                    <td>Password</td>
+                    <td><input type="password" class="form-control" id="password" name="password" /></td>
 
-            <div class="mb-3">
-                <label for="confirm_password" class="form-label">Confirm Password:</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password">
-            </div>
+                </tr>
 
-            <div class="mb-3">
-                <label for="firstname" class="form-label">First Name:</label>
-                <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter firstname">
-            </div>
+                <tr>
+                    <td>Confirm Password</td>
+                    <td><input type="password" class="form-control" id="confirm_password" name="confirm_password" /></td>
+                </tr>
 
-            <div class="mb-3">
-                <label for="lastname" class="form-label">Last Name:</label>
-                <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter lastname">
-            </div>
+                <tr>
+                    <td>First Name</td>
+                    <td><input type="text" class="form-control" id="firstname" name="firstname" placeholder="" /></td>
+                </tr>
 
-            <div class="mb-3">
-                <label for="gender" class="form-label">Gender:</label><br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="gender" id="male" value="male">
-                    <label class="form-check-label" for="male">Male</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="gender" id="female" value="female">
-                    <label class="form-check-label" for="female">Female</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="gender" id="other" value="other">
-                    <label class="form-check-label" for="other">Other</label>
-                </div>
-            </div>
+                <tr>
+                    <td>Last Name</td>
+                    <td><input type="text" class="form-control" id="lastname" name="lastname" placeholder="" /></td>
+                </tr>
 
-            <!--date of birth-->
-            <div class="mb-3">
-                <label for="dateofbirth" class="form-label">Date of Birth:</label>
-                <div class="row">
-                    <div class="col">
-                        <select class="form-select" id="date_day" name="date_day">
-                            <option value="" selected disabled>Day</option>
-                            <?php
-                            for ($day = 1; $day <= 31; $day++) {
-                                echo "<option value='$day'>$day</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <select class="form-select" id="date_month" name="date_month">
-                            <option value="" selected disabled>Month</option>
-                            <?php
-                            $months = array(
-                                "January", "February", "March", "April", "May", "June",
-                                "July", "August", "September", "October", "November", "December"
-                            );
-                            foreach ($months as $x => $month) {
-                                $indexmonth = $x + 1;
-                                echo "<option value='$indexmonth'>$month</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col">
+                <tr>
+                    <td>Gender</td>
+                    <td><input type="radio" name="gender" id="male" value="male" checked>
+                        <label for="male">Male</label><br>
+                        <input type="radio" name="gender" id="female" value="female">
+                        <label for="female">Female</label><br>
+                        <input type="radio" name="gender" id="other" value="other">
+                        <label for="other">Other</label>
+                </tr>
 
-                        <select class="form-select" id="date_year" name="date_year">
-                            <option value="" selected disabled>Year</option>
-                            <?php
-                            $currentYear = date("Y");
-                            for ($year = 1900; $year <= $currentYear; $year++) {
-                                echo "<option value='$year'>$year</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-            </div>
+                <tr>
+                    <td>Date of Birth</td>
+                    <td><input type='date' name='date_of_birth' class='form-control' value="<?php echo isset($_POST['date_of_birth']) ? $_POST['date_of_birth'] : ''; ?>" /></td>
+                </tr>
 
-            <div class="mb-3">
-                <label for="account_status" class="form-label">Account Status:</label>
-                <select class="form-select" id="account_status" name="account_status">
-                    <option value="" selected disabled>Select Account Status</option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Pending">Pending</option>
-                </select>
-            </div>
+                <tr>
+                    <td>Account Status</td>
+                    <td><input type="radio" name="account_status" id="active" value="active" checked>
+                        <label class="form-check-label" for="active">Active</label>
 
-            <button type="submit" class="btn btn-primary" name="submit">Register</button>
-            <!--</table>-->
+                        <input type="radio" name="account_status" id="inactive" value="inactive">
+                        <label class="form-check-label" for="inactive">Inactive</label>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td><input type='submit' value='Save' class='btn btn-primary' /></td>
+                </tr>
+            </table>
         </form>
 
 
