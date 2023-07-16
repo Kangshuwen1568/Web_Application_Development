@@ -18,17 +18,30 @@
             <h1>Read Customers</h1>
         </div>
 
+        <div class="mb-3">
+            <form class="d-flex" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="GET">
+                <input class="form-control me-2" type="text" name="search" placeholder="Search Customer by name/email" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+
         <!-- PHP code to read records will be here -->
         <?php
         // include database connection
         include 'config/database.php';
 
-
-
         // select all data
+        $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
         $query = "SELECT id, username, firstname, lastname, email, account_status FROM customers ";
+        if (!empty($search_keyword)) {
+            $query .= " WHERE username LIKE :keyword OR firstname LIKE :keyword OR lastname LIKE :keyword OR email LIKE :keyword";
+            $search_keyword = "%{$search_keyword}%";
+        }
         $query .= " ORDER BY id DESC";
         $stmt = $con->prepare($query); // prepare query for execution
+        if (!empty($search_keyword)) {
+            $stmt->bindParam(':keyword', $search_keyword);
+        }
         // bind the parameters
 
 
@@ -39,7 +52,7 @@
         $num = $stmt->rowCount();
 
         // link to create record form
-        echo "<a href='create.php' class='btn btn-primary m-b-1em'>Create New Customers</a>";
+        echo "<a href='customer_create.php' class='btn btn-primary m-b-1em'>Create New Customers</a>";
 
         //check if more than 0 record found
         if ($num > 0) {

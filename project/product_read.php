@@ -18,6 +18,14 @@
             <h1>Read Products</h1>
         </div>
 
+        <!-- Search form -->
+        <div class="mb-3">
+            <form class="d-flex" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="GET">
+                <input class="form-control me-2" type="text" name="search" placeholder="Search Product by name" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+
         <!-- PHP code to read records will be here -->
         <?php
         // include database connection
@@ -25,18 +33,28 @@
 
         // delete message prompt will be here
 
+
         // select all data
-        $query = "SELECT id, name, description, price FROM products ORDER BY id DESC ";
+        $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
+        $query = "SELECT id, name, description, price, promotion_price FROM products ";
+        if (!empty($search_keyword)) {
+            $query .= " WHERE name LIKE :keyword";
+            $search_keyword = "%{$search_keyword}%";
+        }
+        $query .= " ORDER BY id DESC";
         $stmt = $con->prepare($query); // prepare query for execution
+        if (!empty($search_keyword)) {
+            $stmt->bindParam(':keyword', $search_keyword);
+        }
         // bind the parameters
-        //$stmt->bindParam(":id", $id);, promotion_price
+
         $stmt->execute();
 
         // this is how to get number of rows returned
         $num = $stmt->rowCount();
 
         // link to create record form
-        echo "<a href='create.php' class='btn btn-primary m-b-1em'>Create New Product</a>";
+        echo "<a href='product_create.php' class='btn btn-primary m-b-1em'>Create New Product</a>";
 
         //check if more than 0 record found
         if ($num > 0) {
@@ -50,6 +68,7 @@
             echo "<th>Name</th>";
             echo "<th>Description</th>";
             echo "<th>Price</th>";
+            echo "<th></th>";
             echo "<th>Action</th>";
             echo "</tr>";
 
@@ -65,20 +84,29 @@
                 echo "<td>{$name}</td>";
                 echo "<td>{$description}</td>";
                 echo "<td>{$price}</td>";
+
+                if ($promotion_price < $price && ($promotion_price != 0)) {
+                    echo "<td class='d-flex justify-content-end'>
+                            <p class=' me-1 text-decoration-line-through'>" . number_format((float)$price, 2, '.', '') . "</p>
+                            <p>" . number_format((float)$promotion_price, 2, '.', '') . "</p>
+                        </td>";
+                } else {
+                    echo "<td class='text-end'>" . number_format((float)$price, 2, '.', '') . "</td>";
+                }
+
+                //Action part table
                 echo "<td>";
                 // read one record
-                echo "<a href='product_read_one.php?id={$id}' class='btn btn-info m-r-1em'>Read</a>";
+                echo "<a href='product_read_one.php?id={$id}' class='btn btn-info m-r-1em text-white mx-1'>Read</a>";
 
                 // we will use this links on next part of this post
-                echo "<a href='product_update.php?id={$id}' class='btn btn-primary m-r-1em'>Edit</a>";
+                echo "<a href='product_update.php?id={$id}' class='btn btn-primary m-r-1em mx-1'>Edit</a>";
 
                 // we will use this links on next part of this post
-                echo "<a href='#' onclick='delete_product({$id});'  class='btn btn-danger'>Delete</a>";
+                echo "<a href='#' onclick='delete_product({$id});'  class='btn btn-danger mx-1'>Delete</a>";
                 echo "</td>";
                 echo "</tr>";
             }
-
-
 
             // end table
             echo "</table>";
@@ -90,7 +118,6 @@
     </div> <!-- end .container -->
 
     <!-- confirm delete record will be here -->
-    <!--BOOTSTRAP5 JS-->
 </body>
 
 </html>
