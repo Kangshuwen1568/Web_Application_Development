@@ -21,6 +21,7 @@
 
         <!-- PHP insert code will be here -->
         <?php
+        date_default_timezone_set('Asia/Kuala_Lumpur');
         if ($_POST) {
             // include database connection
             include 'config/database.php';
@@ -48,11 +49,15 @@
             // check price field is empty
             if (empty($price)) {
                 $errors[] = "Price is required.";
+            } else if (!is_numeric($price)) {
+                $errors[] = "Price must be number.";
             }
 
             // check promotion price field is empty
             if (empty($promotionPrice)) {
                 $errors[] = "Promotion price is required.";
+            } else if (!is_numeric($promotionPrice)) {
+                $errors[] = "Promotion price must be number.";
             }
 
             // check manufacture date field is empty
@@ -65,6 +70,16 @@
                 $errors[] = "Expired date is required.";
             }
 
+            // Check if the promotion price is not cheaper than the original price
+            if ($promotionPrice >= $price) {
+                $errors[] = "Promotion price must be cheaper than the original price.";
+            }
+
+            // Check if the expiration date is not earlier than the manufacturing date
+            if ($expiredDate <= $manufactureDate) {
+                $errors[] = "Expired date must be later than the manufacture date.";
+            }
+
             // check if any errors occurred
             if (!empty($errors)) {
                 $errorMessage = "<div class='alert alert-danger'>";
@@ -75,42 +90,36 @@
                 $errorMessage .= "</div>";
                 echo $errorMessage;
             } else {
-                // validate expired date
-                if ($expiredDate <= $manufactureDate) {
-                    echo "<div class='alert alert-danger'>Expired date must be later than the manufacture date.</div>";
-                } else {
-                    try {
-                        // insert query
-                        $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
-                        // prepare query for execution
-                        $stmt = $con->prepare($query);
+                try {
+                    // insert query
+                    $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
+                    // prepare query for execution
+                    $stmt = $con->prepare($query);
 
-                        // bind the parameters
-                        $stmt->bindParam(':name', $name);
-                        $stmt->bindParam(':description', $description);
-                        $stmt->bindParam(':price', $price);
-                        $stmt->bindParam(':promotion_price', $promotionPrice);
-                        $stmt->bindParam(':manufacture_date', $manufactureDate);
-                        $stmt->bindParam(':expired_date', $expiredDate);
+                    // bind the parameters
+                    $stmt->bindParam(':name', $name);
+                    $stmt->bindParam(':description', $description);
+                    $stmt->bindParam(':price', $price);
+                    $stmt->bindParam(':promotion_price', $promotionPrice);
+                    $stmt->bindParam(':manufacture_date', $manufactureDate);
+                    $stmt->bindParam(':expired_date', $expiredDate);
 
-                        $created = date('Y-m-d H:i:s'); // get the current date and time
-                        $stmt->bindParam(':created', $created);
+                    $created = date('Y-m-d H:i:s'); // get the current date and time
+                    $stmt->bindParam(':created', $created);
 
-                        // Execute the query
-                        if ($stmt->execute()) {
-                            echo "<div class='alert alert-success'>Record was saved.</div>";
-                        } else {
-                            echo "<div class='alert alert-danger'>Unable to save record.</div>";
-                        }
+                    // Execute the query
+                    if ($stmt->execute()) {
+                        echo "<div class='alert alert-success'>Record was saved.</div>";
+                    } else {
+                        echo "<div class='alert alert-danger'>Unable to save record.</div>";
                     }
-                    // show error
-                    catch (PDOException $exception) {
-                        die('ERROR: ' . $exception->getMessage());
-                    }
+                }
+                // show error
+                catch (PDOException $exception) {
+                    die('ERROR: ' . $exception->getMessage());
                 }
             }
         }
-
 
         ?>
 

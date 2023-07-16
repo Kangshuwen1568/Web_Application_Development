@@ -31,12 +31,11 @@
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, name, description, price FROM products WHERE id = :id ";
+            $query = "SELECT id, name, description, price, promotion_price, manufacture_date, expired_date FROM products WHERE id = :id ";
             $stmt = $con->prepare($query);
 
             // Bind the parameter
             $stmt->bindParam(":id", $id);
-
             // execute our query
             $stmt->execute();
 
@@ -47,6 +46,9 @@
             $name = $row['name'];
             $description = $row['description'];
             $price = $row['price'];
+            $promotion_price = $row['promotion_price'];
+            $manufacture_date = $row['manufacture_date'];
+            $expired_date = $row['expired_date'];
             // shorter way to do that is extract($row)
         }
 
@@ -69,8 +71,21 @@
             </tr>
             <tr>
                 <td>Price</td>
-                <td><?php echo htmlspecialchars($price, ENT_QUOTES);  ?></td>
+                <td><?php echo htmlspecialchars(number_format((float)$price, 2, '.', ''), ENT_QUOTES);  ?></td>
             </tr>
+            <tr>
+                <td>Promotion Price</td>
+                <td><?php echo htmlspecialchars(number_format((float)$promotion_price, 2, '.', ''), ENT_QUOTES);  ?></td>
+            </tr>
+            <tr>
+                <td>Manufacture Date</td>
+                <td><?php echo htmlspecialchars($manufacture_date, ENT_QUOTES);  ?></td>
+            </tr>
+            <tr>
+                <td>Expired Date</td>
+                <td><?php echo htmlspecialchars($expired_date, ENT_QUOTES);  ?></td>
+            </tr>
+
             <tr>
                 <td></td>
                 <td>
