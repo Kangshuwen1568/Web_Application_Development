@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE HTML>
 <html>
 
@@ -11,14 +14,52 @@
     <!-- container -->
     <div class="container">
 
+        <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <!--logo-->
+                <a class="navbar-brand">SW</a>
+            </div>
+        </nav>
+
         <!-- PHP insert code will be here -->
         <?php
         if ($_POST) {
-            //include database connection
+            // include database connection
             include 'config/database.php';
-        }
 
+            $username = $_POST['username_email'];
+            $password = $_POST['password'];
+
+            $errors = array();
+
+            //check if username/email is empty
+            if (empty($username)) {
+                $errors[] = "Username/email is required.";
+            }
+
+            //check if password is empty
+            if (empty($password)) {
+                $errors[] = "Password is required.";
+            }
+
+            // check if any errors occurred
+            if (!empty($errors)) {
+                $errorMessage = "<div class='alert alert-danger'>";
+                // display out the error messages
+                foreach ($errors as $error) {
+                    $errorMessage .= $error . "<br>";
+                }
+                $errorMessage .= "</div>";
+                echo $errorMessage;
+            } else {
+                try {
+                } catch (PDOException $exception) { // show error
+                    die('ERROR: ' . $exception->getMessage());
+                }
+            }
+        }
         ?>
+
 
         <!-- html form here where the product information will be entered -->
         <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
