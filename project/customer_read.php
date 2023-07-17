@@ -70,7 +70,6 @@
             echo "<th>Action</th>";
             echo "</tr>";
 
-
             // table body will be here
             // retrieve our table contents
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
