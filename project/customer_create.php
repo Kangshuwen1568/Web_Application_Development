@@ -27,6 +27,7 @@
             $username = $_POST['username'];
             $password = $_POST['password'];
             $confirm_password = $_POST['confirm_password'];
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT); //password hash
             $firstname = $_POST['firstname'];
             $lastname = $_POST['lastname'];
             $gender = $_POST['gender'];
@@ -107,7 +108,7 @@
 
                     // bind the parameters
                     $stmt->bindParam(':username', $username);
-                    $stmt->bindParam(':password', $password);
+                    $stmt->bindParam(':password', $hashed_password); //password hash
                     $stmt->bindParam(':firstname', $firstname);
                     $stmt->bindParam(':lastname', $lastname);
                     $stmt->bindParam(':gender', $gender);
