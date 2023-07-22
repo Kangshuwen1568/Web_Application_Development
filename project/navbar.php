@@ -41,6 +41,10 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link" href="order_summary.php">order summary</a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link" href="contact_form.php">Contact</a>
                 </li>
             </ul>
