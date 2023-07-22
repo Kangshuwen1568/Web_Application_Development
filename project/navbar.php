@@ -20,6 +20,16 @@
                     </ul>
                 </li>
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Categories</a>
+
+                    <ul class="dropdown-menu">
+                        <li> <a class="dropdown-item" href="category_create.php">Create Category</a></li>
+                        <li> <a class="dropdown-item" href="category_read.php">Read Category</a></li>
+                        <li> <a class="dropdown-item" href="category_read_one.php">Read One Category</a></li>
+                    </ul>
+                </li>
+
                 <li class="nav-item  dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Customers</a>
 
