@@ -36,12 +36,13 @@
 
         // select all data
         $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
-        $query = "SELECT id, name, description, price, promotion_price FROM products ";
+        $query = "SELECT products.id, products.name, products.description, products.price, products.promotion_price, categories.category_name 
+                FROM products INNER JOIN categories ON products.category_id = categories.id";
         if (!empty($search_keyword)) {
-            $query .= " WHERE name LIKE :keyword";
+            $query .= " WHERE products.name LIKE :keyword";
             $search_keyword = "%{$search_keyword}%";
         }
-        $query .= " ORDER BY id DESC";
+        $query .= " ORDER BY products.id DESC";
         $stmt = $con->prepare($query); // prepare query for execution
         if (!empty($search_keyword)) {
             $stmt->bindParam(':keyword', $search_keyword);
@@ -66,10 +67,13 @@
             echo "<tr>";
             echo "<th>ID</th>";
             echo "<th>Name</th>";
+            echo "<th>Category Name</th>";
             echo "<th>Description</th>";
             echo "<th>Price</th>";
             echo "<th></th>";
+
             echo "<th>Action</th>";
+            //echo "<th>Categoryname</th>";
             echo "</tr>";
 
             // table body will be here
@@ -82,8 +86,10 @@
                 echo "<tr>";
                 echo "<td>{$id}</td>";
                 echo "<td>{$name}</td>";
+                echo "<td>{$category_name}</td>";     // Display the Categoryname
                 echo "<td>{$description}</td>";
                 echo "<td>{$price}</td>";
+
 
                 if ($promotion_price < $price && ($promotion_price != 0)) {
                     echo "<td class='d-flex justify-content-end'>

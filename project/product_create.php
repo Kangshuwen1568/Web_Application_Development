@@ -30,6 +30,7 @@
             $description = $_POST['description'];
             $price = $_POST['price'];
             $promotionPrice = $_POST['promotion_price'];
+            $category_id = $_POST['category_id'];
             $manufactureDate = $_POST['manufacture_date'];
             $expiredDate = $_POST['expired_date'];
 
@@ -92,7 +93,7 @@
             } else {
                 try {
                     // insert query
-                    $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
+                    $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
                     // prepare query for execution
                     $stmt = $con->prepare($query);
 
@@ -101,6 +102,7 @@
                     $stmt->bindParam(':description', $description);
                     $stmt->bindParam(':price', $price);
                     $stmt->bindParam(':promotion_price', $promotionPrice);
+                    $stmt->bindParam(':category_id', $category_id);
                     $stmt->bindParam(':manufacture_date', $manufactureDate);
                     $stmt->bindParam(':expired_date', $expiredDate);
 
@@ -145,6 +147,28 @@
                 </tr>
 
                 <tr>
+                    <td>Category Name</td>
+                    <td><select class="form-select" name="category_id">
+                            <?php
+                            include 'config/database.php';
+                            //in "category" table中得到"category_name"的data
+                            $query = "SELECT id, category_name FROM categories";
+                            $stmt = $con->prepare($query);
+                            $stmt->execute();
+                            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                            // 下拉菜单的选项
+                            foreach ($categories as $category) { // Use $category['id'] as the value for each option
+                                $categoryID = $category['id'];
+                                $categoryName = $category['category_name'];
+                                echo "<option value='$categoryID'>$categoryName</option>";
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
                     <td>Manufacture_date</td>
                     <td><input type='date' name='manufacture_date' class='form-control' /></td>
                 </tr>
@@ -156,7 +180,7 @@
                     <td></td>
                     <td>
                         <input type='submit' value='Save' class='btn btn-primary' />
-                        <a href='index.php' class='btn btn-danger'>Back to read products</a>
+                        <a href='product_read.php' class='btn btn-danger'>Back to read products</a>
                     </td>
                 </tr>
             </table>

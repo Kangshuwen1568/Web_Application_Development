@@ -31,7 +31,8 @@
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, name, description, price, promotion_price, manufacture_date, expired_date FROM products WHERE id = :id ";
+            $query = "SELECT products.id, products.name, products.description, products.price, products.promotion_price, products.manufacture_date, products.expired_date, products.category_id, categories.category_name 
+                FROM products INNER JOIN categories ON products.category_id = categories.id WHERE products.id = :id ";
             $stmt = $con->prepare($query);
 
             // Bind the parameter
@@ -49,6 +50,8 @@
             $promotion_price = $row['promotion_price'];
             $manufacture_date = $row['manufacture_date'];
             $expired_date = $row['expired_date'];
+            $category_id = $row['category_id'];
+            $category_name = $row['category_name'];
             // shorter way to do that is extract($row)
         }
 
@@ -84,6 +87,10 @@
             <tr>
                 <td>Expired Date</td>
                 <td><?php echo htmlspecialchars($expired_date, ENT_QUOTES);  ?></td>
+            </tr>
+            <tr>
+                <td>Category Name</td>
+                <td><?php echo htmlspecialchars($category_name, ENT_QUOTES);  ?></td>
             </tr>
 
             <tr>
