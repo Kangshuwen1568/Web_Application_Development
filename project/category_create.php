@@ -16,7 +16,7 @@
         include 'navbar.php';
         ?>
         <div class="page-header">
-            <h1>Create Categories</h1>
+            <h1>Create Category</h1>
         </div>
 
         <!-- PHP insert code will be here -->
@@ -92,7 +92,7 @@
                     <td></td>
                     <td>
                         <input type='submit' value='Save' class='btn btn-primary' />
-                        <a href='categories_read.php' class='btn btn-danger'>Back to read categories</a>
+                        <a href='category_read.php' class='btn btn-danger'>Back to read categories</a>
                     </td>
                 </tr>
             </table>
