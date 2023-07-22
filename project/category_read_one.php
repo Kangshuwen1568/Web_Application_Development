@@ -69,7 +69,7 @@
             <tr>
                 <td></td>
                 <td>
-                    <a href='categories_read.php' class='btn btn-danger'>Back to read categories</a>
+                    <a href='category_read.php' class='btn btn-danger'>Back to read categories</a>
                 </td>
             </tr>
         </table>
