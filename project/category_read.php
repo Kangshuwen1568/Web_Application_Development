@@ -30,9 +30,9 @@
 
         // select all data                  
         $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
-        $query = "SELECT id, name, description FROM categories ";
+        $query = "SELECT id, category_name, description FROM categories ";
         if (!empty($search_keyword)) {
-            $query .= " WHERE name LIKE :keyword";
+            $query .= " WHERE category_name LIKE :keyword";
             $search_keyword = "%{$search_keyword}%";
         }
         $query .= " ORDER BY id DESC";
@@ -58,7 +58,7 @@
             //creating our table heading
             echo "<tr>";
             echo "<th>ID</th>";
-            echo "<th>Name</th>";
+            echo "<th>Category Name</th>";
             echo "<th>Description</th>";
             echo "<th>Action</th>";
             echo "</tr>";
@@ -72,7 +72,7 @@
                 // creating new table row per record
                 echo "<tr>";
                 echo "<td>{$id}</td>";
-                echo "<td>{$name}</td>";
+                echo "<td>{$category_name}</td>";
                 echo "<td>{$description}</td>";
 
                 //Action part table

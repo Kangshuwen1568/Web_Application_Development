@@ -25,14 +25,14 @@
             // include database connection
             include 'config/database.php';
 
-            $name = $_POST['name'];
+            $category_name = $_POST['category_name'];
             $description = $_POST['description'];
 
             // initialize an array to store error messages
             $errors = array();
 
             // check name field is empty
-            if (empty($name)) {
+            if (empty($category_name)) {
                 $errors[] = "Category Name is required.";
             }
 
@@ -53,12 +53,12 @@
             } else {
                 try {
                     // insert query
-                    $query = "INSERT INTO categories SET name=:name, description=:description";
+                    $query = "INSERT INTO categories SET category_name=:category_name, description=:description";
                     // prepare query for execution
                     $stmt = $con->prepare($query);
 
                     // bind the parameters
-                    $stmt->bindParam(':name', $name);
+                    $stmt->bindParam(':category_name', $category_name);
                     $stmt->bindParam(':description', $description);
 
                     // Execute the query
@@ -82,7 +82,7 @@
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Category Name</td>
-                    <td><input type='text' name='name' class='form-control' /></td>
+                    <td><input type='text' name='category_name' class='form-control' /></td>
                 </tr>
                 <tr>
                     <td>Description</td>

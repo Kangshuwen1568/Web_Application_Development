@@ -31,7 +31,7 @@
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, name, description FROM categories WHERE id = :id ";
+            $query = "SELECT id, category_name, description FROM categories WHERE id = :id ";
             $stmt = $con->prepare($query);
 
             // Bind the parameter
@@ -43,7 +43,7 @@
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // values to fill up our form
-            $name = $row['name'];
+            $category_name = $row['category_name'];
             $description = $row['description'];
             // shorter way to do that is extract($row)
         }
@@ -59,7 +59,7 @@
         <table class='table table-hover table-responsive table-bordered'>
             <tr>
                 <td>Name</td>
-                <td><?php echo htmlspecialchars($name, ENT_QUOTES);  ?></td>
+                <td><?php echo htmlspecialchars($category_name, ENT_QUOTES);  ?></td>
             </tr>
             <tr>
                 <td>Description</td>
