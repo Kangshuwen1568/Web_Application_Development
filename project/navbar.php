@@ -40,8 +40,13 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="order_summary.php">order summary</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Order</a>
+
+                    <ul class="dropdown-menu">
+                        <li> <a class="dropdown-item" href="order_create.php">Create Order</a></li>
+
+                    </ul>
                 </li>
 
                 <li class="nav-item">
