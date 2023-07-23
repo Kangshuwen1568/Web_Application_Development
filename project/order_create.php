@@ -28,14 +28,16 @@
 
             $customer_id = $_POST['customer_id'];
             $order_date = $_POST['order_date'];
-
-            // Array to store product_id and quantity
             $productid = $_POST['product_id'];
             $quantities = $_POST['quantity'];
 
-
             // initialize an array to store error messages
             $errors = array();
+
+            // check order date field is empty
+            if (empty($order_date)) {
+                $errors[] = "Order date is required.";
+            }
 
             // Check if at least one product is selected
             if (empty($productid)) {
@@ -67,9 +69,11 @@
                     $stmt = $con->prepare($insert_summary_query);
                     // bind the parameters
                     $stmt->bindParam(':customer_id', $customer_id);
-                    $stmt->bindParam(':order_date', $order_date);
+
                     date_default_timezone_set('Asia/Kuala_Lumpur');
                     $order_date = date('Y-m-d H:i:s');
+                    $stmt->bindParam(':order_date', $order_date);
+
 
                     // Execute the query
                     if ($stmt->execute()) {
@@ -199,7 +203,7 @@
                 </tr>
                 <tr>
                     <td>Order Date</td>
-                    <td><input type="date" name="order_date" class="form-control" required></td>
+                    <td><input type="date" name="order_date" class="form-control" /></td>
                 </tr>
                 <tr>
                     <td></td>
