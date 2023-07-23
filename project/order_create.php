@@ -30,7 +30,7 @@
             $order_date = $_POST['order_date'];
 
             // Array to store product_id and quantity
-            $producti = $_POST['product_id'];
+            $productid = $_POST['product_id'];
             $quantities = $_POST['quantity'];
 
 
@@ -38,7 +38,7 @@
             $errors = array();
 
             // Check if at least one product is selected
-            if (empty($producti)) {
+            if (empty($productid)) {
                 $errors[] = "Please select at least one product.";
             }
 
@@ -81,9 +81,9 @@
                         $stmt = $con->prepare($insert_order_details_query);
 
                         // bind the parameters
-                        for ($i = 0; $i < count($producti); $i++) {
+                        for ($i = 0; $i < count($productid); $i++) {
                             $stmt->bindParam(':order_id', $order_id);
-                            $stmt->bindParam(':product_id', $producti[$i]);
+                            $stmt->bindParam(':product_id', $productid[$i]);
                             $stmt->bindParam(':quantity', $quantities[$i]);
                             $stmt->execute();
                         }
@@ -132,10 +132,9 @@
                 <tr>
                     <td>Product</td>
                     <td>
-                        Product 1
+                        Product 1:
                         <select name="product_id[]" class='form-select'>
                             <?php
-                            include 'config/database.php';
                             //in "products" table中得到"product_name"的data
                             $query = "SELECT id, name FROM products";
                             $stmt = $con->prepare($query);
@@ -154,10 +153,9 @@
                         </select>
                         Quantity: <input type="number" name="quantity[]" value="1" min="1" class="mb-3">
                         <br>
-                        Product 2
+                        Product 2:
                         <select name="product_id[]" class='form-select '>
                             <?php
-                            include 'config/database.php';
                             //in "products" table中得到"product_name"的data
                             $query = "SELECT id, name FROM products";
                             $stmt = $con->prepare($query);
@@ -177,10 +175,9 @@
                         Quantity: <input type="number" name="quantity[]" value="1" min="1" class="mb-3">
 
                         <br>
-                        Product 3
+                        Product 3:
                         <select name="product_id[]" class='form-select'>
                             <?php
-                            include 'config/database.php';
                             //in "products" table中得到"product_name"的data
                             $query = "SELECT id, name FROM products";
                             $stmt = $con->prepare($query);
