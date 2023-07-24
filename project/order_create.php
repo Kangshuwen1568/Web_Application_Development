@@ -21,6 +21,7 @@
 
         <!-- PHP insert code will be here -->
         <?php
+        // include database connection
         include 'config/database.php';
         $query = "SELECT id, name FROM products";
         $stmt = $con->prepare($query);
@@ -32,7 +33,6 @@
 
         if ($_POST) {
             // include database connection
-            include 'config/database.php';
 
             $customer_id = $_POST['customer_id'];
             $order_date = $_POST['order_date'];
