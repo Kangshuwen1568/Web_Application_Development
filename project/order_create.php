@@ -21,6 +21,14 @@
 
         <!-- PHP insert code will be here -->
         <?php
+        include 'config/database.php';
+        $query = "SELECT id, name FROM products";
+        $stmt = $con->prepare($query);
+        $stmt->execute();
+        // this is how to get number of rows returned
+        $num = $stmt->rowCount();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
         if ($_POST) {
             // include database connection
@@ -48,7 +56,7 @@
             foreach ($quantities as $quantity) {
                 if ($quantity < 1) {
                     $errors[] = "Quantity must be greater than 0.";
-                    break;
+                    break;      //when user input less that 1, error message such display in"errors array", and will stop the foreach(loop)
                 }
             }
 
@@ -113,7 +121,6 @@
                     <td>Customer Name</td>
                     <td><select name='customer_id' class='form-select'>
                             <?php
-                            include 'config/database.php';
                             //in "customers" table中得到"customers_name"的data
                             $query = "SELECT id, username FROM customers";
                             $stmt = $con->prepare($query);
@@ -139,14 +146,6 @@
                         Product 1:
                         <select name="product_id[]" class='form-select'>
                             <?php
-                            //in "products" table中得到"product_name"的data
-                            $query = "SELECT id, name FROM products";
-                            $stmt = $con->prepare($query);
-                            $stmt->execute();
-                            // this is how to get number of rows returned
-                            $num = $stmt->rowCount();
-                            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
                             // 下拉菜单的选项
                             foreach ($products as $product) { // Use $customer['id'] as the value for each option
                                 $productID = $product['id'];
@@ -155,19 +154,11 @@
                             }
                             ?>
                         </select>
-                        Quantity: <input type="number" name="quantity[]" value="1" min="1" class="mb-3">
+                        Quantity: <input type="number" name="quantity[]" value="0" min="1" class="mb-3">
                         <br>
                         Product 2:
                         <select name="product_id[]" class='form-select '>
                             <?php
-                            //in "products" table中得到"product_name"的data
-                            $query = "SELECT id, name FROM products";
-                            $stmt = $con->prepare($query);
-                            $stmt->execute();
-                            // this is how to get number of rows returned
-                            $num = $stmt->rowCount();
-                            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
                             // 下拉菜单的选项
                             foreach ($products as $product) { // Use $customer['id'] as the value for each option
                                 $productID = $product['id'];
@@ -176,20 +167,12 @@
                             }
                             ?>
                         </select>
-                        Quantity: <input type="number" name="quantity[]" value="1" min="1" class="mb-3">
+                        Quantity: <input type="number" name="quantity[]" value="0" min="1" class="mb-3">
 
                         <br>
                         Product 3:
                         <select name="product_id[]" class='form-select'>
                             <?php
-                            //in "products" table中得到"product_name"的data
-                            $query = "SELECT id, name FROM products";
-                            $stmt = $con->prepare($query);
-                            $stmt->execute();
-                            // this is how to get number of rows returned
-                            $num = $stmt->rowCount();
-                            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
                             // 下拉菜单的选项
                             foreach ($products as $product) { // Use $customer['id'] as the value for each option
                                 $productID = $product['id'];
@@ -198,7 +181,7 @@
                             }
                             ?>
                         </select>
-                        Quantity: <input type="number" name="quantity[]" value="1" min="1" class="mb-3">
+                        Quantity: <input type="number" name="quantity[]" value="0" min="1" class="mb-3">
                     </td>
                 </tr>
                 <tr>
