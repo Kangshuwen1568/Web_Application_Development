@@ -193,6 +193,7 @@
                     <td></td>
                     <td>
                         <input type='submit' value='Place' class='btn btn-primary' />
+                        <a href='order_read.php' class='btn btn-danger'>Back to read order</a>
                     </td>
                 </tr>
             </table>
