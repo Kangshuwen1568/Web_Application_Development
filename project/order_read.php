@@ -2,39 +2,47 @@
 <html>
 
 <head>
-    <title>Read Order Detail</title>
+    <title>Read order summary</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <!-- container -->
     <div class="container">
         <?php
         include 'navbar.php';
         ?>
 
         <div class="page-header">
-            <h1>Read Order Detail</h1>
+            <h1>Read Order Summary</h1>
         </div>
 
-        <!-- PHP code to read records will be here -->
+        <div class="mb-3">
+            <form class="d-flex" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="GET">
+                <input class="form-control me-2" type="text" name="search" placeholder="Search Customer by name" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+
         <?php
-        $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: Record ID not found.');
         // include database connection
         include 'config/database.php';
 
-        $query = "SELECT order_details.order_detail_id, order_details.order_id, products.name, order_details.quantity
-        FROM order_details INNER JOIN products ON order_details.product_id = products.id WHERE order_details.order_id =:id";
-        $stmt = $con->prepare($query);
-        $stmt->bindParam(":id", $id);
-        // delete message prompt will be here
-
-
         // select all data
-
+        $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
+        $query = "SELECT order_summary.order_id, customers.firstname, customers.lastname, order_summary.order_date FROM order_summary INNER JOIN customers ON order_summary.customer_id = customers.id";
+        if (!empty($searchKeyword)) {
+            $query .= " WHERE customers.firstname LIKE :keyword OR customers.lastname LIKE :keyword";
+            $searchKeyword = "%{$searchKeyword}%";
+        }
+        $query .= " ORDER BY order_summary.order_id ASC";
+        $stmt = $con->prepare($query); // prepare query for execution
+        if (!empty($searchKeyword)) {
+            $stmt->bindParam(':keyword', $searchKeyword);
+        }
         // bind the parameters
 
+        // delete message prompt will be here
         $stmt->execute();
 
         // this is how to get number of rows returned
@@ -51,10 +59,10 @@
 
             //creating our table heading
             echo "<tr>";
-            echo "<th>Order Detail ID</th>";
             echo "<th>Order ID</th>";
-            echo "<th>Product Name</th>";
-            echo "<th>Quantity</th>";
+            echo "<th>Customer Name</th>";
+            echo "<th>Order Date</th>";
+            echo "<th>Action</th>";
             echo "</tr>";
 
             // table body will be here
@@ -65,23 +73,23 @@
                 extract($row);
                 // creating new table row per record
                 echo "<tr>";
-                echo "<td>{$order_detail_id}</td>";
                 echo "<td>{$order_id}</td>";
-                echo "<td>{$name}</td>";
-                echo "<td>{$quantity}</td>";
+                echo "<td>{$firstname} {$lastname}</td>";
+                echo "<td>{$order_date}</td>";
+                echo "<td class='col-2'>";
+                // read one record
+                echo "<a href='order_detail_read.php?id={$order_id}' class='btn btn-info m-r-1em'>Read Order Details</a>";
+                echo "</td>";
+
                 echo "</tr>";
             }
             // end table
             echo "</table>";
-            echo "<a href='order_read.php' class='btn btn-danger'>Back to Order List</a>";
         } else {
             echo "<div class='alert alert-danger'>No records found.</div>";
         }
         ?>
-
     </div> <!-- end .container -->
-
-    <!-- confirm delete record will be here -->
 </body>
 
 </html>
