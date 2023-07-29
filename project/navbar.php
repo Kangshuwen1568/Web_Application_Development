@@ -17,6 +17,7 @@
                         <li> <a class="dropdown-item" href="product_create.php">Create Product</a></li>
                         <li> <a class="dropdown-item" href="product_read.php">Read Product</a></li>
                         <li> <a class="dropdown-item" href="product_read_one.php">Read One Product</a></li>
+                        <li> <a class="dropdown-item" href="product_update.php">Update Product</a></li>
                     </ul>
                 </li>
 
@@ -27,6 +28,7 @@
                         <li> <a class="dropdown-item" href="category_create.php">Create Category</a></li>
                         <li> <a class="dropdown-item" href="category_read.php">Read Category</a></li>
                         <li> <a class="dropdown-item" href="category_read_one.php">Read One Category</a></li>
+                        <li> <a class="dropdown-item" href="category_update.php">Update Category</a></li>
                     </ul>
                 </li>
 
@@ -37,6 +39,7 @@
                         <li> <a class="dropdown-item" href="customer_create.php">Create Customer</a></li>
                         <li> <a class="dropdown-item" href="customer_read.php">Read Customer</a></li>
                         <li> <a class="dropdown-item" href="customer_read_one.php">Read One Customer</a></li>
+                        <li> <a class="dropdown-item" href="custmer_update.php">Update Customer</a></li>
                     </ul>
                 </li>
 
@@ -45,6 +48,7 @@
 
                     <ul class="dropdown-menu">
                         <li> <a class="dropdown-item" href="order_create.php">Create Order</a></li>
+                        <li> <a class="dropdown-item" href="order_detail_read.php">Read Order Detail</a></li>
 
                     </ul>
                 </li>
