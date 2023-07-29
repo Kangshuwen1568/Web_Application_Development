@@ -15,7 +15,7 @@
         ?>
 
         <div class="page-header">
-            <h1>Read Products</h1>
+            <h1>Read Order</h1>
         </div>
 
         <!-- Search form -->
