@@ -24,7 +24,7 @@
         // include database connection
         include 'config/database.php';
 
-        $query = "SELECT order_details.order_detail_id, order_details.order_id, products.name, order_details.quantity
+        $query = "SELECT order_details.order_detail_id, order_details.order_id, products.name, products.price, products.promotion_price, order_details.quantity
         FROM order_details INNER JOIN products ON order_details.product_id = products.id WHERE order_details.order_id =:id";
         $stmt = $con->prepare($query);
         $stmt->bindParam(":id", $id);
@@ -55,7 +55,12 @@
             echo "<th>Order ID</th>";
             echo "<th>Product Name</th>";
             echo "<th>Quantity</th>";
+            echo "<th>Price</th>";
+            echo "<th>Total Amount</th>";
             echo "</tr>";
+
+            // initialize the total amount variable
+            $totalAmount = 0;
 
             // table body will be here
             // retrieve our table contents
@@ -63,16 +68,29 @@
                 // extract row
                 // this will make $row['firstname'] to just $firstname only
                 extract($row);
+
+                // calculate the total amount for the product based on promotion price or regular price
+                $productPrice = ($promotion_price > 0 && $promotion_price < $price) ? $promotion_price : $price;
+                $productTotalAmount = $productPrice * $quantity;
+                $totalAmount += $productTotalAmount;
+
+
                 // creating new table row per record
                 echo "<tr>";
                 echo "<td>{$order_detail_id}</td>";
                 echo "<td>{$order_id}</td>";
                 echo "<td>{$name}</td>";
                 echo "<td>{$quantity}</td>";
+                echo "<td>RM" . number_format($productPrice, 2) . "</td>"; // Display the product price with 2 decimal places
+                echo "<td>RM" . number_format($productTotalAmount, 2) . "</td>"; // Display total amount with 2 decimal places
                 echo "</tr>";
             }
             // end table
             echo "</table>";
+
+            // display the Total Order Amount below the table
+            echo "<h3>Total Order Amount: RM" . number_format($totalAmount, 2) . "</h3>";
+
             echo "<a href='order_read.php' class='btn btn-danger'>Back to Order List</a>";
         } else {
             echo "<div class='alert alert-danger'>No records found.</div>";
