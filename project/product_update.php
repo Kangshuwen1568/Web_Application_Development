@@ -93,27 +93,48 @@
                 $category_id = htmlspecialchars(strip_tags($_POST['category_id']));
                 $manufacture_date = htmlspecialchars(strip_tags($_POST['manufacture_date']));
                 $expired_date = htmlspecialchars(strip_tags($_POST['expired_date']));
-                // bind the parameters
-                $stmt->bindParam(':name', $name);
-                $stmt->bindParam(':description', $description);
-                $stmt->bindParam(':price', $price);
-                $stmt->bindParam(':promotion_price', $promotion_price);
-                $stmt->bindParam(':category_id', $category_id);
-                $stmt->bindParam(':manufacture_date', $manufacture_date);
-                $stmt->bindParam(':expired_date', $expired_date);
-                $stmt->bindParam(':id', $id);
-                // Execute the query
-                if ($stmt->execute()) {
-                    echo "<div class='alert alert-success'>Record was updated.</div>";
+                // initialize an array to store error messages
+                $errors = array();
+                // Check if the promotion price is not cheaper than the original price
+                if ($promotion_price >= $price) {
+                    $errors[] = "Promotion price must be cheaper than the original price.";
+                }
+
+                // check if any errors occurred
+                if (!empty($errors)) {
+                    $errorMessage = "<div class='alert alert-danger'>";
+                    // display out the error messages
+                    foreach ($errors as $error) {
+                        $errorMessage .= $error . "<br>";
+                    }
+                    $errorMessage .= "</div>";
+                    echo $errorMessage;
                 } else {
-                    echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
+
+                    // bind the parameters
+                    $stmt->bindParam(':name', $name);
+                    $stmt->bindParam(':description', $description);
+                    $stmt->bindParam(':price', $price);
+                    $stmt->bindParam(':promotion_price', $promotion_price);
+                    $stmt->bindParam(':category_id', $category_id);
+                    $stmt->bindParam(':manufacture_date', $manufacture_date);
+                    $stmt->bindParam(':expired_date', $expired_date);
+                    $stmt->bindParam(':id', $id);
+                    // Execute the query
+                    if ($stmt->execute()) {
+                        echo "<div class='alert alert-success'>Record was updated.</div>";
+                    } else {
+                        echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
+                    }
                 }
             }
             // show errors
             catch (PDOException $exception) {
                 die('ERROR: ' . $exception->getMessage());
             }
-        } ?>
+        }
+
+        ?>
 
 
         <!--HTML form to update record will be here -->
@@ -134,7 +155,7 @@
                 </tr>
 
                 <tr>
-                    <td>Promotion_price</td>
+                    <td>Promotion price</td>
                     <td><input type='text' name='promotion_price' value="<?php echo htmlspecialchars($promotion_price, ENT_QUOTES);  ?>" class='form-control' /></td>
                 </tr>
 
