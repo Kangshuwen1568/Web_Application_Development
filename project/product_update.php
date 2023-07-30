@@ -100,6 +100,11 @@
                     $errors[] = "Promotion price must be cheaper than the original price.";
                 }
 
+                // Check if the expiration date is not earlier than the manufacturing date
+                if ($expired_date <= $manufacture_date) {
+                    $errors[] = "Expired date must be later than the manufacture date.";
+                }
+
                 // check if any errors occurred
                 if (!empty($errors)) {
                     $errorMessage = "<div class='alert alert-danger'>";

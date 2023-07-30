@@ -127,6 +127,10 @@
                     $hashed_password = $row['password']; // Keep the current password in the database
                 }
 
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = "Invalid email format.";
+                }
+
                 // check if any errors occurred
                 if (!empty($errors)) {
                     $errorMessage = "<div class='alert alert-danger'>";
