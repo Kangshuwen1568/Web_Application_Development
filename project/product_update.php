@@ -43,13 +43,10 @@
         // isset() is a PHP function used to verify if a value is there or not
         $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: Record ID not found.');
 
-        //include database connection
-        include 'config/database.php';
-
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, name, description, price FROM products WHERE id = ? LIMIT 0,1";
+            $query = "SELECT id, name, description, price, promotion_price, category_id, manufacture_date, expired_date FROM products WHERE id = ? LIMIT 0,1";
             $stmt = $con->prepare($query);
 
             // this is the first question mark
@@ -65,6 +62,10 @@
             $name = $row['name'];
             $description = $row['description'];
             $price = $row['price'];
+            $promotion_price = $row['promotion_price'];
+            $category_id = $row['category_id'];
+            $manufacture_date = $row['manufacture_date'];
+            $expired_date = $row['expired_date'];
         }
 
         // show error
@@ -81,17 +82,25 @@
                 // write update query
                 // in this case, it seemed like we have so many fields to pass and
                 // it is better to label them and not use question marks
-                $query = "UPDATE products SET name=:name, description=:description, price=:price WHERE id = :id";
+                $query = "UPDATE products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date WHERE id = :id";
                 // prepare query for excecution
                 $stmt = $con->prepare($query);
                 // posted values
                 $name = htmlspecialchars(strip_tags($_POST['name']));
                 $description = htmlspecialchars(strip_tags($_POST['description']));
                 $price = htmlspecialchars(strip_tags($_POST['price']));
+                $promotion_price = htmlspecialchars(strip_tags($_POST['promotion_price']));
+                $category_id = htmlspecialchars(strip_tags($_POST['category_id']));
+                $manufacture_date = htmlspecialchars(strip_tags($_POST['manufacture_date']));
+                $expired_date = htmlspecialchars(strip_tags($_POST['expired_date']));
                 // bind the parameters
                 $stmt->bindParam(':name', $name);
                 $stmt->bindParam(':description', $description);
                 $stmt->bindParam(':price', $price);
+                $stmt->bindParam(':promotion_price', $promotion_price);
+                $stmt->bindParam(':category_id', $category_id);
+                $stmt->bindParam(':manufacture_date', $manufacture_date);
+                $stmt->bindParam(':expired_date', $expired_date);
                 $stmt->bindParam(':id', $id);
                 // Execute the query
                 if ($stmt->execute()) {
@@ -122,6 +131,43 @@
                 <tr>
                     <td>Price</td>
                     <td><input type='text' name='price' value="<?php echo htmlspecialchars($price, ENT_QUOTES);  ?>" class='form-control' /></td>
+                </tr>
+
+                <tr>
+                    <td>Promotion_price</td>
+                    <td><input type='text' name='promotion_price' value="<?php echo htmlspecialchars($promotion_price, ENT_QUOTES);  ?>" class='form-control' /></td>
+                </tr>
+
+                <tr>
+                    <td>Category Name</td>
+                    <td><select class=" form-select" name="category_id">
+                            <?php
+                            //in "category" table中得到"category_name"的data
+                            $query = "SELECT id, category_name FROM categories";
+                            $stmt = $con->prepare($query);
+                            $stmt->execute();
+                            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                            // 下拉菜单的选项
+                            foreach ($categories as $category) { // Use $category['id'] as the value for each option
+                                $categoryID = $category['id'];
+                                $categoryName = $category['category_name'];
+                                // Check if the current category ID matches the product's category ID
+                                $selected = ($categoryID == $category_id) ? 'selected' : '';
+                                echo "<option value='$categoryID' $selected>$categoryName</option>";
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Manufacture date</td>
+                    <td><input type='date' name='manufacture_date' value="<?php echo htmlspecialchars($manufacture_date, ENT_QUOTES); ?>" class='form-control' /></td>
+                </tr>
+                <tr>
+                    <td>Expired date</td>
+                    <td><input type='date' name='expired_date' value="<?php echo htmlspecialchars($expired_date, ENT_QUOTES); ?>" class='form-control' /></td>
                 </tr>
                 <tr>
                     <td></td>
