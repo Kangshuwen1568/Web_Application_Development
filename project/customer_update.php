@@ -86,7 +86,7 @@
                 // write update query
                 // in this case, it seemed like we have so many fields to pass and
                 // it is better to label them and not use question marks
-                $query = "UPDATE customers SET username=:username, password=:password, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=: date_of_birth, email=:email, registration=:registration, account_status=:account_status WHERE id = :id";
+                $query = "UPDATE customers SET username=:username, password=:password, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=:date_of_birth, email=:email, registration=:registration, account_status=:account_status WHERE id = :id";
                 // prepare query for excecution
                 $stmt = $con->prepare($query);
                 // posted values
@@ -96,7 +96,7 @@
                 $gender = htmlspecialchars(strip_tags($_POST['gender']));
                 $old_password = htmlspecialchars(strip_tags($_POST['old_password']));
                 $new_password = htmlspecialchars(strip_tags($_POST['new_password']));
-                $comfirm_password = htmlspecialchars(strip_tags($_POST['comfirm_password']));
+                $confirm_password = htmlspecialchars(strip_tags($_POST['confirm_password']));
                 $date_of_birth = htmlspecialchars(strip_tags($_POST['date_of_birth']));
                 $email = htmlspecialchars(strip_tags($_POST['email']));
                 $registration = htmlspecialchars(strip_tags($_POST['registration']));
@@ -117,6 +117,14 @@
                         $errors[] = "New passwords do not match.";
                     }
                     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                } else {
+                    // If the password fields are empty, the password update is not requested.
+                    // Only update the other fields (username, firstname, lastname, etc.)
+                    // Unset the password-related variables to prevent updating the password in the database
+                    unset($old_password);
+                    unset($new_password);
+                    unset($confirm_password);
+                    $hashed_password = $row['password']; // Keep the current password in the database
                 }
 
                 // check if any errors occurred
@@ -135,7 +143,7 @@
                     $stmt->bindParam(':firstname', $firstname);
                     $stmt->bindParam(':lastname', $lastname);
                     $stmt->bindParam(':gender', $gender);
-                    $stmt->bindParam(':password', $hashed_password);
+                    $stmt->bindParam(':password', $hashed_password); // Use the updated hashed password
                     $stmt->bindParam(':date_of_birth', $date_of_birth);
                     $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':registration', $registration);
@@ -167,9 +175,9 @@
                 <tr>
                     <td>Change Password</td>
                     <td>
-                        <input type="password" class="form-control" name="old_password" placeholder="old password" />
-                        <input type="password" class="form-control" name="new_password" placeholder="new password" />
-                        <input type="password" class="form-control" name="confirm_password" placeholder="confirm password" />
+                        <input type="password" class="form-control" name="old_password" placeholder="Old password" />
+                        <input type="password" class="form-control" name="new_password" placeholder="New password" />
+                        <input type="password" class="form-control" name="confirm_password" placeholder="Confirm New Password" />
                     </td>
                 </tr>
                 <tr>
@@ -183,18 +191,15 @@
                 <tr>
                     <td>Gender</td>
                     <td>
-                        <input type='radio' id="male" name='gender' value='male' <?php if ($row['gender'] == "Male") {
-                                                                                        echo 'checked';
-                                                                                    } ?>>
+                        <input type='radio' id='male' name='gender' value='male' <?php echo ($gender === 'male') ? 'checked' : ''; ?>>
                         <label for="male">Male</label><br>
-                        <input type='radio' id="female" name='gender' value='female' <?php if ($row['gender'] == "Female") {
-                                                                                            echo 'checked';
-                                                                                        } ?>>
+
+                        <input type='radio' id='female' name='gender' value='female' <?php echo ($gender === 'female') ? 'checked' : ''; ?>>
                         <label for="female">Female</label><br>
-                        <input type='radio' id="other" name='gender' value='other' <?php if ($row['gender'] == "Other") {
-                                                                                        echo 'checked';
-                                                                                    } ?>>
+
+                        <input type='radio' id='other' name='gender' value='other' <?php echo ($gender === 'other') ? 'checked' : ''; ?>>
                         <label for="other">Other</label>
+
                     </td>
                 </tr>
 
@@ -214,14 +219,12 @@
                 <tr>
                     <td>Account Status</td>
                     <td>
-                        <input type='radio' id="active" name='account_status' value='active' <?php if ($row['account_status'] == "Active") {
-                                                                                                    echo 'checked';
-                                                                                                } ?>>
+                        <input type='radio' id="active" name='account_status' value='active' <?php echo ($account_status === 'active') ? 'checked' : ''; ?>>
                         <label for="active">Active</label><br>
-                        <input type='radio' id="inactive" name='account_status' value='inactive' <?php if ($row['account_status'] == "Inactive") {
-                                                                                                        echo 'checked';
-                                                                                                    } ?>>
+
+                        <input type='radio' id="inactive" name='account_status' value='inactive' <?php echo ($account_status === 'inactive') ? 'checked' : ''; ?>>
                         <label for="inactive">Inactive</label><br>
+
                     </td>
                 </tr>
                 <tr>
