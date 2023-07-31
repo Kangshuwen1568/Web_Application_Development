@@ -49,7 +49,7 @@
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT username, password, firstname, lastname, gender, date_of_birth, email, registration, account_status FROM customers WHERE id = ? LIMIT 0,1";
+            $query = "SELECT username, password, firstname, lastname, gender, date_of_birth, email, account_status FROM customers WHERE id = ? LIMIT 0,1";
             $stmt = $con->prepare($query);
 
             // this is the first question mark
@@ -68,7 +68,6 @@
             $gender = $row['gender'];
             $date_of_birth = $row['date_of_birth'];
             $email = $row['email'];
-            $registration = $row['registration'];
             $account_status = $row['account_status'];
         }
 
@@ -86,45 +85,38 @@
                 // write update query
                 // in this case, it seemed like we have so many fields to pass and
                 // it is better to label them and not use question marks
-                $query = "UPDATE customers SET username=:username, password=:password, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=:date_of_birth, email=:email, registration=:registration, account_status=:account_status WHERE id = :id";
+                $query = "UPDATE customers SET username=:username, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=:date_of_birth, email=:email, account_status=:account_status WHERE id = :id";
                 // prepare query for excecution
                 $stmt = $con->prepare($query);
                 // posted values
                 $username = htmlspecialchars(strip_tags($_POST['username']));
                 $firstname = htmlspecialchars(strip_tags($_POST['firstname']));
                 $lastname = htmlspecialchars(strip_tags($_POST['lastname']));
-                $gender = htmlspecialchars(strip_tags($_POST['gender']));
-                $old_password = htmlspecialchars(strip_tags($_POST['old_password']));
-                $new_password = htmlspecialchars(strip_tags($_POST['new_password']));
-                $confirm_password = htmlspecialchars(strip_tags($_POST['confirm_password']));
-                $date_of_birth = htmlspecialchars(strip_tags($_POST['date_of_birth']));
+                $gender = $_POST['gender'];
+                $date_of_birth = $_POST['date_of_birth'];
                 $email = htmlspecialchars(strip_tags($_POST['email']));
-                $registration = htmlspecialchars(strip_tags($_POST['registration']));
-                $account_status = htmlspecialchars(strip_tags($_POST['account_status']));
+                $account_status = $_POST['account_status'];
+                $old_password = $_POST['old_password'];
+                $new_password = $_POST['new_password'];
+                $confirm_password = $_POST['confirm_password'];
+
                 // initialize an array to store error messages
                 $errors = array();
                 // Check if the password fields are not empty and valid
-                if (!empty($_POST['old_password']) || !empty($_POST['new_password']) || !empty($_POST['confirm_password'])) {
-                    $old_password = $_POST['old_password'];
-                    $new_password = $_POST['new_password'];
-                    $confirm_password = $_POST['confirm_password'];
 
+
+                if (!empty($old_password) && !empty($new_password) && !empty($confirm_password)) {
                     if (strlen($new_password) < 6) {
                         $errors[] = "New password should be at least 6 characters.";
                     } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/", $new_password)) {
                         $errors[] = "New password should contain at least 1 uppercase letter, 1 lowercase letter, and 1 number. No symbols allowed.";
                     } elseif ($new_password !== $confirm_password) {
                         $errors[] = "New passwords do not match.";
+                    } else {
+                        // If the password fields are not empty and valid, include password update in the query
+                        $query .= ", password=:password";
+                        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
                     }
-                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                } else {
-                    // If the password fields are empty, the password update is not requested.
-                    // Only update the other fields (username, firstname, lastname, etc.)
-                    // Unset the password-related variables to prevent updating the password in the database
-                    unset($old_password);
-                    unset($new_password);
-                    unset($confirm_password);
-                    $hashed_password = $row['password']; // Keep the current password in the database
                 }
 
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -147,12 +139,16 @@
                     $stmt->bindParam(':firstname', $firstname);
                     $stmt->bindParam(':lastname', $lastname);
                     $stmt->bindParam(':gender', $gender);
-                    $stmt->bindParam(':password', $hashed_password); // Use the updated hashed password
+                    //$stmt->bindParam(':password', $hashed_password); // Use the updated hashed password
                     $stmt->bindParam(':date_of_birth', $date_of_birth);
                     $stmt->bindParam(':email', $email);
-                    $stmt->bindParam(':registration', $registration);
                     $stmt->bindParam(':account_status', $account_status);
                     $stmt->bindParam(':id', $id);
+
+                    if (isset($hashed_password)) {
+                        $stmt->bindParam(':password', $hashed_password);
+                    }
+
                     // Execute the query
                     if ($stmt->execute()) {
                         echo "<div class='alert alert-success'>Record was updated.</div>";
@@ -217,10 +213,6 @@
                     <td><input type='text' name='email' value="<?php echo htmlspecialchars($email, ENT_QUOTES);  ?>" class='form-control' /></td>
                 </tr>
                 <tr>
-                    <td>Registration</td>
-                    <td><input type='datetime-local' name='registration' value="<?php echo htmlspecialchars($registration, ENT_QUOTES);  ?>" class='form-control' /></td>
-                </tr>
-                <tr>
                     <td>Account Status</td>
                     <td>
                         <input type='radio' id="active" name='account_status' value='active' <?php echo ($account_status === 'active') ? 'checked' : ''; ?>>
@@ -249,3 +241,28 @@
 </body>
 
 </html>
+
+<!--
+    if (!empty($_POST['old_password']) || !empty($_POST['new_password']) || !empty($_POST['confirm_password'])) {
+                    $old_password = $_POST['old_password'];
+                    $new_password = $_POST['new_password'];
+                    $confirm_password = $_POST['confirm_password'];
+
+                    if (strlen($new_password) < 6) {
+                        $errors[] = "New password should be at least 6 characters.";
+                    } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/", $new_password)) {
+                        $errors[] = "New password should contain at least 1 uppercase letter, 1 lowercase letter, and 1 number. No symbols allowed.";
+                    } elseif ($new_password !== $confirm_password) {
+                        $errors[] = "New passwords do not match.";
+                    }
+                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                } else {
+                    // If the password fields are empty, the password update is not requested.
+                    // Only update the other fields (username, firstname, lastname, etc.)
+                    // Unset the password-related variables to prevent updating the password in the database
+                    unset($old_password);
+                    unset($new_password);
+                    unset($confirm_password);
+                    $hashed_password = $row['password']; // Keep the current password in the database
+                }*/
+            -->
