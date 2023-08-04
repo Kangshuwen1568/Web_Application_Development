@@ -30,64 +30,70 @@
             <h1>Create New Order</h1>
         </div>
         <!-- PHP insert code will be here -->
+
         <?php
-
-
         if ($_POST) {
-            // include database connection
-            include 'config/database.php';
-            $customer_id = $_POST['customer_id'];
-            $order_date = $_POST['order_date'];
+            try {
 
-            $product_id = $_POST['product_id'];
-            $quantity = $_POST['quantity'];
 
-            // initialize an array to store error messages
-            $errors = array();
+                $customer_id = $_POST['customer_id'];
+                $order_date = $_POST['order_date'];
 
-            // check order date field is empty
-            if (empty($customer_id)) {
-                $errors[] = "Please select your name.";
-            }
+                $product_id = $_POST['product_id'];
+                $quantity = $_POST['quantity'];
+                // Initialize an array to store error messages
+                $errors = array();
 
-            // check order date field is empty
-            if (empty($order_date)) {
-                $errors[] = "Order date is required.";
-            }
-
-            // Check if at least one product is selected
-            if (empty($product_id)) {
-                $errors[] = "Please select product.";
-            }
-
-            // Check if the quantities are valid (greater than 0)
-            foreach ($quantity as $quantitys) {
-                if ($quantitys < 1) {
-                    $errors[] = "Quantity must be greater than 0.";
-                    break;      //when user input less that 1, error message such display in"errors array", and will stop the foreach(loop)
+                // check order date field is empty
+                if (empty($customer_id)) {
+                    $errors[] = "Please select your name.";
                 }
-            }
 
-            // check if any errors occurred
-            if (!empty($errors)) {
-                $errorMessage = "<div class='alert alert-danger'>";
-                // display out the error messages
-                foreach ($errors as $error) {
-                    $errorMessage .= $error . "<br>";
+                // Check if at least one product is selected
+                if (empty($product_id)) {
+                    $errors[] = "Please select a product.";
                 }
-                $errorMessage .= "</div>";
-                echo $errorMessage;
-            } else {
-                try {
+
+                // Check if the quantities are valid (greater than 0)
+                foreach ($quantity as $quantityValue) {
+                    if ($quantityValue <= 0) {
+                        $errors[] = "Quantity must be greater than 0.";
+                        break;  // Stop the loop if a quantity is invalid
+                    }
+                }
+
+                // check order date field is empty
+                if (empty($order_date)) {
+                    $errors[] = "Order date is required.";
+                }
+
+                // Remove duplicated products and corresponding quantities
+                $noduplicate = array_unique($product_id);
+                if (sizeof($noduplicate) != sizeof($product_id)) {
+                    foreach ($product_id as $key => $val) {
+                        if (!array_key_exists($key, $noduplicate)) {
+                            $errors[] = "Duplicated products have been chosen.";
+                            unset($product_id[$key]);
+                            unset($quantity[$key]);
+                        }
+                    }
+                }
+
+                // Check if any errors occurred
+                if (!empty($errors)) {
+                    $errorMessage = "<div class='alert alert-danger'>";
+                    foreach ($errors as $error) {
+                        $errorMessage .= $error . "<br>";
+                    }
+                    $errorMessage .= "</div>";
+                    echo $errorMessage;
+                } else {
                     // Insert order summary
                     $insert_summary_query = "INSERT INTO order_summary SET customer_id=:customer_id, order_date=:order_date";
-                    // prepare query for execution
+                    // Prepare query for execution
                     $stmt_summary = $con->prepare($insert_summary_query);
-                    // bind the parameters
+                    // Bind the parameters
                     $stmt_summary->bindParam(':customer_id', $customer_id);
-
-                    date_default_timezone_set('Asia/Kuala_Lumpur');
-                    $order_date = date('Y-m-d H:i:s');
                     $stmt_summary->bindParam(':order_date', $order_date);
 
                     // Execute the query
@@ -96,12 +102,11 @@
                         $order_id = $con->lastInsertId();
                         // Insert order details
                         $insert_order_details_query = "INSERT INTO order_details SET order_id=:order_id, product_id=:product_id, quantity=:quantity";
-                        // prepare query for execution
+                        // Prepare query for execution
                         $stmt_details = $con->prepare($insert_order_details_query);
 
-                        // bind the parameters
-                        $sum_product = count($product_id);
-                        for ($i = 0; $i < $sum_product; $i++) {
+                        // Bind the parameters and execute for each product
+                        for ($i = 0; $i < count($product_id); $i++) {
                             $stmt_details->bindParam(':order_id', $order_id);
                             $stmt_details->bindParam(':product_id', $product_id[$i]);
                             $stmt_details->bindParam(':quantity', $quantity[$i]);
@@ -109,16 +114,15 @@
                         }
 
                         echo "<div class='alert alert-success'>Order created successfully.</div>";
-                    } else {
-                        echo "<div class='alert alert-danger'>Unable to create the order.</div>";
                     }
-                } catch (PDOException $exception) {
-                    echo "<div class='alert alert-danger'>Unable to create the order.</div>";
-                    die('ERROR: ' . $exception->getMessage());
+
+                    $selected_product = isset($noduplicate) ? count($noduplicate) : count($product_id);
                 }
+            } catch (PDOException $exception) {
+                echo "<div class='alert alert-danger'>Unable to create the order.</div>";
+                //die('ERROR: ' . $exception->getMessage());
             }
         }
-
         ?>
 
         <!-- html form here where the product information will be entered -->
@@ -127,7 +131,7 @@
                 <tr>
                     <td>Customer Name</td>
                     <td><select name='customer_id' class='form-select'>
-                            <option>Please select your username</option>
+                            <option value="">Please select your username</option>
                             <?php
                             //in "customers" table中得到"customers_name"的data
                             $query = "SELECT id, username FROM customers";
@@ -148,6 +152,7 @@
                     </td>
                 </tr>
             </table>
+
             <table class='table table-hover table-responsive table-bordered' id="row_del">
                 <tr>
                     <td class="text-center text-light">#</td>
@@ -155,6 +160,7 @@
                     <td class="text-center">Quantity</td>
                     <td class="text-center">Action</td>
                 </tr>
+
                 <tr class="pRow">
                     <td class="text-center">1</td>
                     <td class="d-flex">
