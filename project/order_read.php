@@ -79,6 +79,8 @@
                 echo "<td class='col-2'>";
                 // read one record
                 echo "<a href='order_detail_read.php?id={$order_id}' class='btn btn-info m-r-1em'>Read Order Details</a>";
+                // we will use this links on next part of this post
+                echo "<a href='order_update.php?id={$order_id}' class='btn btn-primary m-r-1em mx-1'>Edit</a>";
                 echo "</td>";
 
                 echo "</tr>";
