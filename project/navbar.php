@@ -39,7 +39,7 @@
                         <li> <a class="dropdown-item" href="customer_create.php">Create Customer</a></li>
                         <li> <a class="dropdown-item" href="customer_read.php">Read Customer</a></li>
                         <li> <a class="dropdown-item" href="customer_read_one.php">Read One Customer</a></li>
-                        <li> <a class="dropdown-item" href="custmer_update.php">Update Customer</a></li>
+                        <li> <a class="dropdown-item" href="customer_update.php">Update Customer</a></li>
                     </ul>
                 </li>
 
@@ -49,7 +49,7 @@
                     <ul class="dropdown-menu">
                         <li> <a class="dropdown-item" href="order_create.php">Create Order</a></li>
                         <li> <a class="dropdown-item" href="order_read.php">Read Order</a></li>
-
+                        <li> <a class="dropdown-item" href="order_update.php">Update Order</a></li>
                     </ul>
                 </li>
 
