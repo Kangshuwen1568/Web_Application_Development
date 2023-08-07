@@ -1,3 +1,6 @@
+<?php
+include 'config/database.php';
+?>
 <html lang="en">
 
 <head>

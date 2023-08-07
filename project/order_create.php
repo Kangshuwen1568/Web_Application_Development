@@ -1,3 +1,6 @@
+<?php
+include 'config/database.php';
+?>
 <!DOCTYPE HTML>
 <html>
 
@@ -113,7 +116,13 @@
                             $stmt_details->execute();
                         }
 
+                        //header("location:order_detail_read.php?id={$order_id}");
+
+                        echo "<script>window.location.href='order_detail_read.php?id={$order_id}'</script>";
+
+
                         echo "<div class='alert alert-success'>Order created successfully.</div>";
+                        exit();
                     }
 
                     $selected_product = isset($noduplicate) ? count($noduplicate) : count($product_id);

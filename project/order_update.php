@@ -1,3 +1,9 @@
+<?php
+include 'config/database.php';
+?>
+<!DOCTYPE HTML>
+<html>
+
 <head>
     <title>Update Order</title>
     <!-- Latest compiled and minified Bootstrap CSS -->

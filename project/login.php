@@ -1,6 +1,7 @@
 <?php
 session_start();
 ?>
+
 <!DOCTYPE HTML>
 <html>
 
@@ -53,6 +54,37 @@ session_start();
                 echo $errorMessage;
             } else {
                 try {
+                    // select query
+                    $query = "SELECT id, username, password, email, account_status FROM customers WHERE username=:username_email OR email=:username_email";
+                    // prepare query for execution
+                    $stmt = $con->prepare($query);
+                    // bind the parameters
+                    $stmt->bindParam(':username_email', $username);
+                    $stmt->execute();
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$row) {
+                        // Username/email not found
+                        echo "<div class='alert alert-danger'>Username/email not found.</div>";
+                    } else {
+                        // Check if the entered password matches the hashed password from the database
+                        if (password_verify($password, $row['password'])) {  //$password（user打的），$row['password']
+                            // Check if the account is active
+                            if ($row['account_status'] == 'active') {
+                                // Login successful
+                                $_SESSION['username'] = $row['username'];
+                                header("Location: index.php");
+                                exit();
+                            } else {
+
+                                // Inactive account
+                                echo "<div class='alert alert-danger'>Inactive account.</div>";
+                            }
+                        } else {
+                            // Incorrect password
+                            echo "<div class='alert alert-danger'>Incorrect password.</div>";
+                        }
+                    }
                 } catch (PDOException $exception) { // show error
                     die('ERROR: ' . $exception->getMessage());
                 }
