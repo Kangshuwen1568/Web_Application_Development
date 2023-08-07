@@ -56,6 +56,18 @@
                 <li class="nav-item">
                     <a class="nav-link" href="contact_form.php">Contact</a>
                 </li>
+                <?php
+                if (isset($_POST['submit'])) {
+                    // destroy the session 
+                    session_destroy();
+                    // remove all session variables
+                    session_unset();
+                    header("location: login . php");
+                }
+                ?>
+                <form action="" method="post">
+                    <input type="submit" class="text-white-50 btn btn-dark" name="submit" value="Logout">
+                </form>
             </ul>
         </div>
     </div>
