@@ -1,5 +1,5 @@
 <?php
-include 'config/database.php';
+include 'menu/validate_login.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -13,7 +13,7 @@ include 'config/database.php';
 <body>
     <div class="container">
         <?php
-        include 'navbar.php';
+        include 'menu/navbar.php';
         ?>
 
         <div class="page-header">

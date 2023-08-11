@@ -1,5 +1,5 @@
 <?php
-include 'config/database.php';
+include 'menu/validate_login.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -16,7 +16,7 @@ include 'config/database.php';
     <div class="container">
         <!-- navbar -->
         <?php
-        include 'navbar.php';
+        include 'menu/navbar.php';
         ?>
         <div class="page-header">
             <h1>Create Category</h1>
