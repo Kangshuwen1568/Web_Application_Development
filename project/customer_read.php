@@ -120,7 +120,7 @@ include 'menu/validate_login.php';
     <!-- confirm delete record will be here -->
     <script type='text/javascript'>
         // confirm record deletion
-        function delete_product(id) {
+        function delete_customer(id) {
 
             if (confirm('Are you sure?')) {
                 // if user clicked ok,
