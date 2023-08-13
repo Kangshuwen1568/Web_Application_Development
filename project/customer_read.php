@@ -33,6 +33,14 @@ include 'menu/validate_login.php';
         // include database connection
         include 'config/database.php';
 
+        // delete message prompt will be here
+        $action = isset($_GET['action']) ? $_GET['action'] : "";
+
+        // if it was redirected from delete.php
+        if ($action == 'deleted') {
+            echo "<div class='alert alert-success'>Record was deleted.</div>";
+        }
+
         // select all data
         $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
         $query = "SELECT id, username, firstname, lastname, email, account_status FROM customers ";
@@ -47,8 +55,6 @@ include 'menu/validate_login.php';
         }
         // bind the parameters
 
-
-        // delete message prompt will be here
         $stmt->execute();
 
         // this is how to get number of rows returned
@@ -112,6 +118,18 @@ include 'menu/validate_login.php';
     </div> <!-- end .container -->
 
     <!-- confirm delete record will be here -->
+    <script type='text/javascript'>
+        // confirm record deletion
+        function delete_product(id) {
+
+            if (confirm('Are you sure?')) {
+                // if user clicked ok,
+                // pass the id to delete.php and execute the delete query
+                window.location = 'customer_delete.php?id=' + id;
+            }
+        }
+    </script>
+
     <!--BOOTSTRAP5 JS-->
 </body>
 
