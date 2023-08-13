@@ -17,6 +17,7 @@ include 'menu/validate_login.php';
         <!-- navbar -->
         <?php
         include 'menu/navbar.php';
+        include 'config/database.php';
         ?>
 
         <div class="container">
