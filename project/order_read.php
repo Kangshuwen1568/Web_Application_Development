@@ -31,6 +31,14 @@ include 'menu/validate_login.php';
         // include database connection
         include 'config/database.php';
 
+        // delete message prompt will be here
+        $action = isset($_GET['action']) ? $_GET['action'] : "";
+
+        // if it was redirected from delete.php
+        if ($action == 'deleted') {
+            echo "<div class='alert alert-success'>Record was deleted.</div>";
+        }
+
         // select all data
         $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
         $query = "SELECT order_summary.order_id, customers.firstname, customers.lastname, order_summary.order_date FROM order_summary INNER JOIN customers ON order_summary.customer_id = customers.id";
@@ -86,6 +94,8 @@ include 'menu/validate_login.php';
                 echo "<a href='order_detail_read.php?id={$order_id}' class='btn btn-info m-r-1em'>Read</a>";
                 // we will use this links on next part of this post
                 echo "<a href='order_update.php?id={$order_id}' class='btn btn-primary m-r-1em mx-1'>Edit</a>";
+                // we will use this links on next part of this post
+                echo "<a href='#' onclick='delete_product({$order_id});'  class='btn btn-danger'>Delete</a>";
                 echo "</td>";
 
                 echo "</tr>";
@@ -97,6 +107,19 @@ include 'menu/validate_login.php';
         }
         ?>
     </div> <!-- end .container -->
+
+    <!-- confirm delete record will be here -->
+    <script type='text/javascript'>
+        // confirm record deletion
+        function delete_order(id) {
+
+            if (confirm('Are you sure?')) {
+                // if user clicked ok,
+                // pass the id to delete.php and execute the delete query
+                window.location = 'order_delete.php?id=' + id;
+            }
+        }
+    </script>
 </body>
 
 </html>
