@@ -96,7 +96,7 @@ include 'menu/validate_login.php';
             } else {
                 try {
                     // insert query
-                    $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
+                    $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, image=:image, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
                     // prepare query for execution
                     $stmt = $con->prepare($query);
 
@@ -105,6 +105,7 @@ include 'menu/validate_login.php';
                     $stmt->bindParam(':description', $description);
                     $stmt->bindParam(':price', $price);
                     $stmt->bindParam(':promotion_price', $promotionPrice);
+                    $stmt->bindParam(':image', $image);
                     $stmt->bindParam(':category_id', $category_id);
                     $stmt->bindParam(':manufacture_date', $manufactureDate);
                     $stmt->bindParam(':expired_date', $expiredDate);
@@ -129,7 +130,7 @@ include 'menu/validate_login.php';
         ?>
 
         <!-- html form here where the product information will be entered -->
-        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" enctype="multipart/form-data">>
+        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" enctype="multipart/form-data">
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Name</td>
