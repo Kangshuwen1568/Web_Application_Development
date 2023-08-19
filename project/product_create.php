@@ -129,7 +129,7 @@ include 'menu/validate_login.php';
         ?>
 
         <!-- html form here where the product information will be entered -->
-        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST">
+        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" enctype="multipart/form-data">>
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Name</td>
@@ -147,6 +147,11 @@ include 'menu/validate_login.php';
                 <tr>
                     <td>Promotion_price</td>
                     <td><input type='text' name='promotion_price' class='form-control' /></td>
+                </tr>
+
+                <tr>
+                    <td>Photo</td>
+                    <td><input type="file" name="image" /></td>
                 </tr>
 
                 <tr>
