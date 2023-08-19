@@ -1,7 +1,7 @@
 <?php
 
 // new 'image' field
-if (!empty($_FILES["image"]["name"])) { // if image is not empty, try to upload the image
+if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to upload the image
     $image = sha1_file($_FILES["image"]["tmp_name"]) . "-" . basename($_FILES["image"]["name"]);
     $image = htmlspecialchars(strip_tags($image));
 
