@@ -1,5 +1,6 @@
 <?php
 include 'menu/validate_login.php';
+$_SESSION['image'] = "product";
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -24,6 +25,7 @@ include 'menu/validate_login.php';
 
         <!-- PHP insert code will be here -->
         <?php
+        include 'file_upload.php';
         date_default_timezone_set('Asia/Kuala_Lumpur');
         if ($_POST) {
             // include database connection

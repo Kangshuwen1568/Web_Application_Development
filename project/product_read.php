@@ -1,6 +1,7 @@
 <?php
 include 'menu/validate_login.php';
 ?>
+
 <!DOCTYPE HTML>
 <html>
 
@@ -15,6 +16,7 @@ include 'menu/validate_login.php';
     <div class="container">
         <?php
         include 'menu/navbar.php';
+
         ?>
 
         <div class="page-header">
@@ -33,7 +35,7 @@ include 'menu/validate_login.php';
         <?php
         // include database connection
         include 'config/database.php';
-
+        include 'file_upload.php';
         // delete message prompt will be here
         $action = isset($_GET['action']) ? $_GET['action'] : "";
 
@@ -44,7 +46,7 @@ include 'menu/validate_login.php';
 
         // select all data
         $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
-        $query = "SELECT products.id, products.name, products.description, products.price, products.promotion_price, categories.category_name 
+        $query = "SELECT products.id, products.name, products.description, products.price, products.promotion_price, products.image, categories.category_name 
                 FROM products INNER JOIN categories ON products.category_id = categories.id";
         if (!empty($search_keyword)) {
             $query .= " WHERE products.name LIKE :keyword";
@@ -75,9 +77,11 @@ include 'menu/validate_login.php';
             echo "<tr>";
             echo "<th>ID</th>";
             echo "<th>Name</th>";
+            echo "<th>Image</th>";
             echo "<th>Category Name</th>";
             echo "<th>Description</th>";
             echo "<th>Price</th>";
+
             echo "<th></th>";
 
             echo "<th>Action</th>";
@@ -94,6 +98,7 @@ include 'menu/validate_login.php';
                 echo "<tr>";
                 echo "<td>{$id}</td>";
                 echo "<td>{$name}</td>";
+                echo "<td><img src='uploads/{$image}' alt='{$name}' width='100'></td>";
                 echo "<td>{$category_name}</td>";     // Display the Categoryname
                 echo "<td>{$description}</td>";
                 echo "<td>{$price}</td>";

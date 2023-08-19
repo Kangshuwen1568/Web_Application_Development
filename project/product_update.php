@@ -1,5 +1,6 @@
 <?php
 include 'menu/validate_login.php';
+$_SESSION['image'] = "product";
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -42,6 +43,7 @@ include 'menu/validate_login.php';
         </div>
         <!-- PHP read record by ID will be here-->
         <?php
+        include 'file_upload.php';
         // get passed parameter value, in this case, the record ID
         // isset() is a PHP function used to verify if a value is there or not
         $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: Record ID not found.');
@@ -85,7 +87,7 @@ include 'menu/validate_login.php';
                 // write update query
                 // in this case, it seemed like we have so many fields to pass and
                 // it is better to label them and not use question marks
-                $query = "UPDATE products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date WHERE id = :id";
+                $query = "UPDATE products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, image=:image, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date WHERE id = :id";
                 // prepare query for excecution
                 $stmt = $con->prepare($query);
                 // posted values
@@ -127,6 +129,7 @@ include 'menu/validate_login.php';
                     $stmt->bindParam(':category_id', $category_id);
                     $stmt->bindParam(':manufacture_date', $manufacture_date);
                     $stmt->bindParam(':expired_date', $expired_date);
+                    $stmt->bindParam(':image', $image);
                     $stmt->bindParam(':id', $id);
                     // Execute the query
                     if ($stmt->execute()) {
@@ -147,7 +150,7 @@ include 'menu/validate_login.php';
 
         <!--HTML form to update record will be here -->
         <!--we have our html form here where new record information can be updated-->
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id={$id}"); ?>" method="post">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id={$id}"); ?>" method="post" enctype="multipart/form-data">
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Name</td>
@@ -165,6 +168,11 @@ include 'menu/validate_login.php';
                 <tr>
                     <td>Promotion price</td>
                     <td><input type='text' name='promotion_price' value="<?php echo htmlspecialchars($promotion_price, ENT_QUOTES);  ?>" class='form-control' /></td>
+                </tr>
+
+                <tr>
+                    <td>Photo</td>
+                    <td><input type="file" name="image" /></td>
                 </tr>
 
                 <tr>
