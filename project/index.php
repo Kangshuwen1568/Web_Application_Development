@@ -51,24 +51,24 @@ include 'menu/validate_login.php';
         ?>
 
         <div class="container row m-auto justify-content-center">
-            <div class="col border border-3 shadow text-center p-3">
+            <div class="col border  border-dark border-3 text-center p-3 m-1">
                 <h3>Total number of customers</h3>
                 <p class="fs-4"><?php echo count($customers); ?></p>
             </div>
-            <div class="col border border-3 shadow text-center p-3">
+            <div class="col border border-dark border-3 text-center p-3 m-1">
                 <h3>Total number of products</h3>
                 <p class="fs-4"><?php echo count($products); ?></p>
             </div>
-            <div class="col border border-3 shadow text-center p-3">
+            <div class="col border border-dark border-3 text-center p-3 m-1">
                 <h3>Total number of orders</h3>
                 <p class="fs-4"><?php echo count($order_summary); ?></p>
             </div>
         </div>
 
 
-        <h2 class="container">Our Order</h2>
+        <h2 class="container text-center mt-3">Latest & Highest Order Details</h2>
         <div class="container row m-auto gap-3">
-            <div class="col border border-3 shadow p-5 text-center rounded">
+            <div class="col border border-dark border-3 p-5 text-center">
                 <h3>Latest Order ID and Summary</h3>
                 <p class="mt-3">Customer Name:
                     <?php
@@ -95,7 +95,7 @@ include 'menu/validate_login.php';
                 </p>
 
             </div>
-            <div class="col border border-3 shadow p-5 text-center rounded">
+            <div class="col border border-dark border-3 p-5 text-center">
                 <h3>Highest Purchased Amount Order</h3>
                 <p class="mt-3"><span>Customer Name:</span>
                     <?php
@@ -126,9 +126,9 @@ include 'menu/validate_login.php';
             </div>
         </div>
 
-        <h2 class="container">Our Product</h2>
+        <h2 class="container text-center mt-3">Product Details</h2>
         <div class="container row m-auto gap-3">
-            <div class="col border border-3 shadow p-5 text-center">
+            <div class="col border border-dark border-3 p-5 text-center">
                 <h2 class="mb-3">Top 5 Selling Products</h2>
                 <?php
                 $top_product_query = "SELECT order_details.product_id, products.name, SUM(order_details.quantity) AS total_quantity
@@ -142,12 +142,12 @@ include 'menu/validate_login.php';
                 $top_products = $top_product_stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 foreach ($top_products as $product) {
-                    echo "<p>{$product['name']} ({$product['total_quantity']} SOLD)</p>";
+                    echo "<p>{$product['name']} &#10145; {$product['total_quantity']} SOLD</p>";
                 }
                 ?>
             </div>
 
-            <div class="col border border-3 shadow p-5 text-center">
+            <div class="col border border-dark border-3 p-5 text-center">
                 <h2 class="mb-3">3 Products Never Purchased</h2>
                 <?php
                 $no_purchased_product_query = "SELECT id, name FROM products WHERE NOT EXISTS(SELECT product_id FROM order_details WHERE order_details.product_id = products.id)";
@@ -155,8 +155,15 @@ include 'menu/validate_login.php';
                 $no_purchased_product_stmt->execute();
                 $no_purchased_products = $no_purchased_product_stmt->fetchAll(PDO::FETCH_ASSOC);
 
+                $display_count = 0; // will counter for displayed products
+
                 foreach ($no_purchased_products as $product) {
-                    echo "<p>{$product['name']}</p>";
+                    if ($display_count < 3) { // display only 3 products
+                        echo "<p>{$product['name']}</p>";
+                        $display_count++;
+                    } else {
+                        break; // break the loop after display 3 products
+                    }
                 }
                 ?>
             </div>
