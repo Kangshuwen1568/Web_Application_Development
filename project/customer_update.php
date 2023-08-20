@@ -42,6 +42,7 @@ include 'menu/validate_login.php';
         </div>
         <!-- PHP read record by ID will be here-->
         <?php
+        include 'file_upload.php';
         // get passed parameter value, in this case, the record ID
         // isset() is a PHP function used to verify if a value is there or not
         $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: Record ID not found.');
@@ -88,7 +89,7 @@ include 'menu/validate_login.php';
                 // write update query
                 // in this case, it seemed like we have so many fields to pass and
                 // it is better to label them and not use question marks
-                $query = "UPDATE customers SET username=:username, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=:date_of_birth, email=:email, account_status=:account_status WHERE id = :id";
+                $query = "UPDATE customers SET username=:username, firstname=:firstname, lastname=:lastname, image=:image, gender=:gender, date_of_birth=:date_of_birth, email=:email, account_status=:account_status WHERE id = :id";
                 // prepare query for excecution
                 $stmt = $con->prepare($query);
                 // posted values
@@ -146,6 +147,7 @@ include 'menu/validate_login.php';
                     $stmt->bindParam(':date_of_birth', $date_of_birth);
                     $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':account_status', $account_status);
+                    $stmt->bindParam(':image', $image);
                     $stmt->bindParam(':id', $id);
 
                     if (isset($hashed_password)) {
@@ -169,7 +171,7 @@ include 'menu/validate_login.php';
 
         <!--HTML form to update record will be here -->
         <!--we have our html form here where new record information can be updated-->
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id={$id}"); ?>" method="post">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id={$id}"); ?>" method="post" enctype="multipart/form-data">
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Username</td>
@@ -227,6 +229,10 @@ include 'menu/validate_login.php';
                     </td>
                 </tr>
                 <tr>
+                    <td>Photo</td>
+                    <td><input type="file" name="image" /></td>
+                </tr>
+                <tr>
                     <td></td>
                     <td>
                         <input type='submit' value='Save Changes' class='btn btn-primary' />
@@ -244,28 +250,3 @@ include 'menu/validate_login.php';
 </body>
 
 </html>
-
-<!--
-    if (!empty($_POST['old_password']) || !empty($_POST['new_password']) || !empty($_POST['confirm_password'])) {
-                    $old_password = $_POST['old_password'];
-                    $new_password = $_POST['new_password'];
-                    $confirm_password = $_POST['confirm_password'];
-
-                    if (strlen($new_password) < 6) {
-                        $errors[] = "New password should be at least 6 characters.";
-                    } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/", $new_password)) {
-                        $errors[] = "New password should contain at least 1 uppercase letter, 1 lowercase letter, and 1 number. No symbols allowed.";
-                    } elseif ($new_password !== $confirm_password) {
-                        $errors[] = "New passwords do not match.";
-                    }
-                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                } else {
-                    // If the password fields are empty, the password update is not requested.
-                    // Only update the other fields (username, firstname, lastname, etc.)
-                    // Unset the password-related variables to prevent updating the password in the database
-                    unset($old_password);
-                    unset($new_password);
-                    unset($confirm_password);
-                    $hashed_password = $row['password']; // Keep the current password in the database
-                }*/
-            -->

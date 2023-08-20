@@ -1,5 +1,6 @@
 <?php
 include 'menu/validate_login.php';
+$_SESSION['image'] = "customer";
 ?>
 <html lang="en">
 
@@ -16,6 +17,7 @@ include 'menu/validate_login.php';
         <!-- navbar -->
         <?php
         include 'menu/navbar.php';
+
         ?>
         <div class="page-header">
             <h1>Create Customer</h1>
@@ -23,10 +25,11 @@ include 'menu/validate_login.php';
 
         <!-- PHP insert code will be here -->
         <?php
+
         if ($_POST) {
             // include database connection
             include 'config/database.php';
-
+            include 'file_upload.php';
             $username = $_POST['username'];
             $password = $_POST['password'];
             $confirm_password = $_POST['confirm_password'];
@@ -105,7 +108,7 @@ include 'menu/validate_login.php';
             } else {
                 try {
                     // insert query
-                    $query = "INSERT INTO customers SET username=:username, password=:password, firstname=:firstname, lastname=:lastname, gender=:gender, date_of_birth=:date_of_birth, email=:email, registration=:registration, account_status=:account_status";
+                    $query = "INSERT INTO customers SET username=:username, password=:password, firstname=:firstname, lastname=:lastname, image=:image, gender=:gender, date_of_birth=:date_of_birth, email=:email, registration=:registration, account_status=:account_status";
                     // prepare query for execution
                     $stmt = $con->prepare($query);
 
@@ -114,6 +117,7 @@ include 'menu/validate_login.php';
                     $stmt->bindParam(':password', $hashed_password); //password hash
                     $stmt->bindParam(':firstname', $firstname);
                     $stmt->bindParam(':lastname', $lastname);
+                    $stmt->bindParam(':image', $image);
                     $stmt->bindParam(':gender', $gender);
                     $stmt->bindParam(':date_of_birth', $date_of_birth);
                     $stmt->bindParam(':email', $email);
@@ -142,8 +146,8 @@ include 'menu/validate_login.php';
         }
         ?>
 
-        <!-- html form here where the product information will be entered -->
-        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST">
+        <!-- html form here where the information will be entered -->
+        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" enctype="multipart/form-data">
             <table class='table table-hover table-responsive table-bordered'>
 
                 <tr>
@@ -201,7 +205,11 @@ include 'menu/validate_login.php';
                         <label class="form-check-label" for="inactive">Inactive</label>
                     </td>
                 </tr>
+                <tr>
+                    <td>Photo</td>
+                    <td><input type="file" name="image" /></td>
 
+                </tr>
                 <tr>
                     <td></td>
                     <td><input type='submit' value='Save' class='btn btn-primary' /></td>

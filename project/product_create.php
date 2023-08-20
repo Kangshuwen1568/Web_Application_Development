@@ -25,12 +25,12 @@ $_SESSION['image'] = "product";
 
         <!-- PHP insert code will be here -->
         <?php
-        include 'file_upload.php';
+
         date_default_timezone_set('Asia/Kuala_Lumpur');
         if ($_POST) {
             // include database connection
             include 'config/database.php';
-
+            include 'file_upload.php';
             $name = $_POST['name'];
             $description = $_POST['description'];
             $price = $_POST['price'];

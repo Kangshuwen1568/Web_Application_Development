@@ -1,5 +1,7 @@
 <?php
 include 'menu/validate_login.php';
+include 'config/database.php';
+include 'file_upload.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -30,8 +32,9 @@ include 'menu/validate_login.php';
 
         <!-- PHP code to read records will be here -->
         <?php
+
         // include database connection
-        include 'config/database.php';
+        //include 'config/database.php';
 
         // delete message prompt will be here
         $action = isset($_GET['action']) ? $_GET['action'] : "";
@@ -43,7 +46,7 @@ include 'menu/validate_login.php';
 
         // select all data
         $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
-        $query = "SELECT id, username, firstname, lastname, email, account_status FROM customers ";
+        $query = "SELECT id, username, firstname, lastname, email, account_status, image FROM customers ";
         if (!empty($search_keyword)) {
             $query .= " WHERE username LIKE :keyword OR firstname LIKE :keyword OR lastname LIKE :keyword OR email LIKE :keyword";
             $search_keyword = "%{$search_keyword}%";
@@ -75,6 +78,7 @@ include 'menu/validate_login.php';
             echo "<th>Username</th>";
             echo "<th>Firstname</th>";
             echo "<th>Lastname</th>";
+            echo "<th>Image</th>";
             echo "<th>Email</th>";
             echo "<th>Action</th>";
             echo "</tr>";
@@ -91,6 +95,15 @@ include 'menu/validate_login.php';
                 echo "<td>{$username}</td>";
                 echo "<td>{$firstname}</td>";
                 echo "<td>{$lastname}</td>";
+                echo "<td><img src='uploads/{$image}' alt='Image' width='100'></td>";
+                // Check if the image file exists in the uploads directory
+                //if (!empty($image) && file_exists("uploads/{$image}")) {
+                //echo "<td><img src='uploads/{$image}' alt='{$username}' width='100'></td>";
+                //} else {
+                // Display the default user image if no image is available
+                //echo "<td><img src='uploads/default_user.png' alt='{$username}' width='100'></td>";
+                //}
+
                 echo "<td>{$email}</td>";
                 echo "<td>{$account_status}</td>";
                 echo "<td>";

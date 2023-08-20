@@ -65,8 +65,11 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
         echo "<div>Update the record to upload photo.</div>";
         echo "</div>";
     }
-} else if ($_SESSION['image'] == "product") {
-    $image = "product_image_coming_soon.jpg";
 } else {
-    $image = "default_user.png";
+    // if no image uploaded, use default image based on session
+    if ($_SESSION['image'] == "product") {
+        $image = "product_image_coming_soon.jpg";
+    } else {
+        $image = "default_user.png";
+    }
 }
