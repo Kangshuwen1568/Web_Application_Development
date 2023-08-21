@@ -18,6 +18,14 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
     $check = getimagesize($_FILES["image"]["tmp_name"]);
     if ($check !== false) {
         // submitted file is an image
+
+        // validate for square size image
+        $imageWidth = $check[0];  // width of the uploaded image
+        $imageHeight = $check[1]; // height of the uploaded image
+
+        if ($imageWidth !== $imageHeight) {
+            $file_upload_error_messages .= "<div>Only square size images are allowed.</div>";
+        }
     } else {
         $file_upload_error_messages .= "<div>Submitted file is not an image.</div>";
     }
@@ -49,6 +57,7 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
         // it means there are no errors, so try to upload the file
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
             // it means photo was uploaded
+
         } else {
             echo "<div class='alert alert-danger'>";
             echo "<div>Unable to upload photo.</div>";
@@ -70,6 +79,6 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
     if ($_SESSION['image'] == "product") {
         $image = "product_image_coming_soon.jpg";
     } else {
-        $image = "default_user.png";
+        $image = "user.png";
     }
 }
