@@ -6,6 +6,18 @@ try {
     // isset() is a PHP function used to verify if a value is there or not
     $id = isset($_GET['id']) ? $_GET['id'] :  die('ERROR: Record ID not found.');
 
+    // Get the filename of the customer image before deleting the record
+    $get_customer_image_query = "SELECT image FROM customers WHERE id = ?";
+    $get_customer_image_stmt = $con->prepare($get_product_image_query);
+    $get_customer_image_stmt->bindParam(1, $id);
+    $get_customer_image_stmt->execute();
+    $customer_image = $get_customer_image_stmt->fetchColumn();
+
+    // Delete the customer image file if it exists
+    if (!empty($customer_image) && file_exists($customer_image)) {
+        unlink($customer_image);
+    }
+
     $check_customer_query = "SELECT COUNT(*) FROM order_summary WHERE customer_id = ?";
     $check_customer_stmt = $con->prepare($check_customer_query);
     $check_customer_stmt->bindParam(1, $id);
