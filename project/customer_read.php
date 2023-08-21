@@ -1,6 +1,7 @@
 <?php
 include 'menu/validate_login.php';
-
+include 'config/database.php';
+include 'file_upload.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -31,8 +32,7 @@ include 'menu/validate_login.php';
 
         <!-- PHP code to read records will be here -->
         <?php
-        include 'config/database.php';
-        include 'file_upload.php';
+
         // include database connection
         //include 'config/database.php';
 

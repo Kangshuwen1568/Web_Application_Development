@@ -35,7 +35,7 @@ include 'menu/validate_login.php';
         <?php
         // include database connection
         include 'config/database.php';
-        include 'file_upload.php';
+        //include 'file_upload.php';
         // delete message prompt will be here
         $action = isset($_GET['action']) ? $_GET['action'] : "";
 

@@ -1,5 +1,6 @@
 <?php
 include 'menu/validate_login.php';
+$_SESSION['image'] = "customer";
 ?>
 <!DOCTYPE HTML>
 <html>
