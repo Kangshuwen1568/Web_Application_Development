@@ -96,14 +96,6 @@ include 'file_upload.php';
                 echo "<td>{$firstname}</td>";
                 echo "<td>{$lastname}</td>";
                 echo "<td><img src='uploads/{$image}' alt='Image' width='100'></td>";
-                // Check if the image file exists in the uploads directory
-                //if (!empty($image) && file_exists("uploads/{$image}")) {
-                //echo "<td><img src='uploads/{$image}' alt='{$username}' width='100'></td>";
-                //} else {
-                // Display the default user image if no image is available
-                //echo "<td><img src='uploads/default_user.png' alt='{$username}' width='100'></td>";
-                //}
-
                 echo "<td>{$email}</td>";
                 echo "<td>{$account_status}</td>";
                 echo "<td>";
