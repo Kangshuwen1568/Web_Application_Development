@@ -95,7 +95,7 @@ include 'menu/validate_login.php';
                 // we will use this links on next part of this post
                 echo "<a href='order_update.php?id={$order_id}' class='btn btn-primary m-r-1em mx-1'>Edit</a>";
                 // we will use this links on next part of this post
-                echo "<a href='#' onclick='delete_product({$order_id});'  class='btn btn-danger'>Delete</a>";
+                echo "<a href='#' onclick='delete_order({$order_id});'  class='btn btn-danger'>Delete</a>";
                 echo "</td>";
 
                 echo "</tr>";

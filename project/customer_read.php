@@ -114,7 +114,7 @@ include 'file_upload.php';
                 echo "<a href='customer_update.php?id={$id}' class='btn btn-primary m-r-1em'>Edit</a>";
 
                 // we will use this links on next part of this post
-                echo "<a href='#' onclick='delete_product({$id});'  class='btn btn-danger'>Delete</a>";
+                echo "<a href='#' onclick='delete_customer({$id});'  class='btn btn-danger'>Delete</a>";
                 echo "</td>";
                 echo "</tr>";
             }
