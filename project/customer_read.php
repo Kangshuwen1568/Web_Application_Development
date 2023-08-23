@@ -1,7 +1,7 @@
 <?php
 include 'menu/validate_login.php';
 include 'config/database.php';
-include 'file_upload.php';
+//include 'file_upload.php';
 ?>
 <!DOCTYPE HTML>
 <html>

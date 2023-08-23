@@ -82,7 +82,7 @@ include 'menu/validate_login.php';
             echo "<th>Description</th>";
             echo "<th>Price</th>";
 
-            echo "<th></th>";
+            //echo "<th></th>";
 
             echo "<th>Action</th>";
             //echo "<th>Categoryname</th>";
@@ -97,19 +97,25 @@ include 'menu/validate_login.php';
                 // creating new table row per record
                 echo "<tr>";
                 echo "<td>{$id}</td>";
-                echo "<td>{$name}</td>";
+                //echo "<td>{$name}</td>";
+                echo "<td><a class='link-underline-light link-dark' href='product_read_one.php?id={$id}'>{$name}</a></td>";
                 echo "<td><img src='uploads/{$image}' alt='{$name}' width='100'></td>";
                 echo "<td>{$category_name}</td>";     // Display the Categoryname
                 echo "<td>{$description}</td>";
-                //echo "<td>RM{$price}</td>";
+                /*echo "<td>RM{$price}</td>";
                 echo "<td>RM " . number_format((float)$price, 2, '.', '') . "</td>";
-
-
-
                 if ($promotion_price < $price && ($promotion_price != 0)) {
                     echo "<td class='d-flex justify-content-end'>
-                            <p class=' me-1 text-decoration-line-through'>" . number_format((float)$price, 2, '.', '') . "</p>
+                            <p class='text-decoration-line-through'>RM" . number_format((float)$price, 2, '.', '') . "</p>
                             
+                            <p>RM" . number_format((float)$promotion_price, 2, '.', '') . "</p>
+                        </td>";
+                } else {
+                    echo "<td class='text-end'>RM" . number_format((float)$price, 2, '.', '') . "</td>";
+                }*/
+                if ($promotion_price < $price && ($promotion_price != 0)) {
+                    echo "<td class='d-flex justify-content-end'>
+                            <p class=' me-1 text-decoration-line-through'>RM" . number_format((float)$price, 2, '.', '') . "</p>
                             <p>RM" . number_format((float)$promotion_price, 2, '.', '') . "</p>
                         </td>";
                 } else {

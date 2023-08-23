@@ -30,11 +30,11 @@ include 'menu/validate_login.php';
 
         //include database connection
         include 'config/database.php';
-
+        include 'file_upload.php';
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, username, firstname, lastname, gender, date_of_birth, email, registration, account_status FROM customers WHERE id = :id ";
+            $query = "SELECT id, username, firstname, lastname, gender, date_of_birth, email, registration, account_status, image FROM customers WHERE id = :id ";
             $stmt = $con->prepare($query);
 
             // Bind the parameter
@@ -55,6 +55,7 @@ include 'menu/validate_login.php';
             $registration_date_time = $row['registration'];
             $account_status = $row['account_status'];
             $email = $row['email'];
+            $image = $row['image'];
             // shorter way to do that is extract($row)
         }
 
@@ -78,6 +79,12 @@ include 'menu/validate_login.php';
             <tr>
                 <td>Last Name</td>
                 <td><?php echo htmlspecialchars($lastname, ENT_QUOTES);  ?></td>
+            </tr>
+            <tr>
+                <td>Profile Image</td>
+                <td>
+                    <img src="<?php echo htmlspecialchars($image, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($username, ENT_QUOTES); ?> " width='100'>
+                </td>
             </tr>
             <tr>
                 <td>Gender</td>

@@ -30,11 +30,11 @@ include 'menu/validate_login.php';
 
         //include database connection
         include 'config/database.php';
-
+        include 'file_upload.php';
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT products.id, products.name, products.description, products.price, products.promotion_price, products.manufacture_date, products.expired_date, products.category_id, categories.category_name 
+            $query = "SELECT products.id, products.name, products.description, products.price, products.promotion_price, products.manufacture_date, products.expired_date, products.category_id, categories.category_name, products.image 
                 FROM products INNER JOIN categories ON products.category_id = categories.id WHERE products.id = :id ";
             $stmt = $con->prepare($query);
 
@@ -51,6 +51,7 @@ include 'menu/validate_login.php';
             $description = $row['description'];
             $price = $row['price'];
             $promotion_price = $row['promotion_price'];
+            $image = $row['image'];
             $manufacture_date = $row['manufacture_date'];
             $expired_date = $row['expired_date'];
             $category_id = $row['category_id'];
@@ -75,6 +76,13 @@ include 'menu/validate_login.php';
                 <td>Description</td>
                 <td><?php echo htmlspecialchars($description, ENT_QUOTES);  ?></td>
             </tr>
+            <tr>
+                <td>Product Image</td>
+                <td>
+                    <img src="<?php echo htmlspecialchars($image, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($name, ENT_QUOTES); ?> " width='100'>
+                </td>
+            </tr>
+
             <tr>
                 <td>Price</td>
                 <td>RM <?php echo number_format((float)$price, 2, '.', ''); ?></td>
