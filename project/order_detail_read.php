@@ -111,7 +111,7 @@ include 'menu/validate_login.php';
                             <p>RM" . number_format((float)$promotion_price, 2, '.', '') . "</p>
                         </td>";
                 } else {
-                    echo "<td class='text-end'>" . number_format((float)$productPrice, 2, '.', '') . "</td>";
+                    echo "<td class='text-end'>RM" . number_format((float)$productPrice, 2, '.', '') . "</td>";
                 }
                 echo "<td class='text-end'>{$quantity}</td>";
                 echo "<td class='text-end'>RM" . number_format($productTotalAmount, 2) . "</td>"; // Display total amount with 2 decimal places
