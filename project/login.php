@@ -44,14 +44,32 @@ session_start();
             }
 
             // check if any errors occurred
-            if (!empty($errors)) {
+            /*if (!empty($errors)) {
                 $errorMessage = "<div class='alert alert-danger'>";
                 // display out the error messages
                 foreach ($errors as $error) {
                     $errorMessage .= $error . "<br>";
                 }
                 $errorMessage .= "</div>";
-                echo $errorMessage;
+                echo $errorMessage;*/
+
+            if (!empty($errors)) {
+                $errorMessage = "<ul>";
+                // concatenate the error messages
+                foreach ($errors as $error) {
+                    $errorMessage .= "<li>{$error}</li>";
+                }
+                $errorMessage .= "</ul>";
+
+                echo "
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var errorText = document.getElementById('errorText');
+                    errorText.innerHTML = '{$errorMessage}';
+                    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+                });
+            </script>";
             } else {
                 try {
                     // select query
@@ -94,27 +112,50 @@ session_start();
 
 
         <!-- html form here where the product information will be entered -->
-        <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-            <div class="border border-3 border-black rounded p-4">
-                <div class="card-title">
-                    <h3>Login</h3>
-                </div>
+        <div class="d-flex flex-column min-vh-100 center align-items-center pt-5 mt-5">
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <div class="border border-3 border-black rounded p-4">
+                    <div class="card-title">
+                        <h3>Login</h3>
+                    </div>
 
-                <form action="" method="post">
-                    <div class="mb-3">
-                        <label for="username_email" class="form-label">Username/Email</label>
-                        <input type="text" class="form-control" id="username_email" name="username_email" placeholder="username/email">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="password">
-                    </div>
-                    <button type="submit" class="btn btn-primary mb-3">Login</button>
-                </form>
+                    <form action="" method="post">
+                        <div class="mb-3">
+                            <label for="username_email" class="form-label">Username/Email</label>
+                            <input type="text" class="form-control" id="username_email" name="username_email" placeholder="username/email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="password">
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-3">Login</button>
+                    </form>
+                </div>
             </div>
         </div>
+
     </div>
     <!-- end .container -->
 </body>
 
 </html>
+
+<!-- bootstrap error modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">localhost says:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--https://getbootstrap.com/docs/5.3/components/modal/-->
