@@ -13,7 +13,6 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
     // error message is empty
     $file_upload_error_messages = "";
 
-
     // make sure that file is a real image
     $check = getimagesize($_FILES["image"]["tmp_name"]);
     if ($check !== false) {
@@ -28,6 +27,10 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
         }
     } else {
         $file_upload_error_messages .= "<div>Submitted file is not an image.</div>";
+    }
+
+    if ($check['width'] > 600 || $check['height'] > 600) {
+        $file_upload_error_messages .= "<div>Submitted files must not exceed the 600px width and 600px height limits.</div>";
     }
 
     // make sure certain file types are allowed

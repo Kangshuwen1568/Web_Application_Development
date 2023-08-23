@@ -1,5 +1,16 @@
 <?php
 include 'menu/validate_login.php';
+include 'config/database.php';
+/// Retrieve the username from the session
+$loggedInUsername = $_SESSION['username'];
+
+// Fetch the customer ID based on the logged-in username
+$query = "SELECT id FROM customers WHERE username = :username";
+$stmt = $con->prepare($query);
+$stmt->bindParam(':username', $loggedInUsername);
+$stmt->execute();
+$customer = $stmt->fetch(PDO::FETCH_ASSOC);
+$customer_id = $customer['id'];
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -27,6 +38,8 @@ include 'menu/validate_login.php';
         // this is how to get number of rows returned
         //$num = $stmt->rowCount();
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
         ?>
 
         <div class="page-header">
@@ -37,9 +50,7 @@ include 'menu/validate_login.php';
         <?php
         if ($_POST) {
             try {
-
-
-                $customer_id = $_POST['customer_id'];
+                //$customer_id = $_POST['customer_id'];
                 $order_date = $_POST['order_date'];
 
                 $product_id = $_POST['product_id'];
@@ -48,9 +59,9 @@ include 'menu/validate_login.php';
                 $errors = array();
 
                 // check order date field is empty
-                if (empty($customer_id)) {
-                    $errors[] = "Please select your name.";
-                }
+                //if (empty($customer_id)) {
+                ///$errors[] = "Please select your name.";
+                //}
 
                 // Check if at least one product is selected
                 if (empty($product_id)) {
@@ -117,6 +128,9 @@ include 'menu/validate_login.php';
                         }
 
                         //header("location:order_detail_read.php?id={$order_id}");
+                        // Redirect to order detail page
+                        //header("Location: order_detail_read.php?id={$order_id}");
+                        //exit();
 
                         echo "<script>window.location.href='order_detail_read.php?id={$order_id}'</script>";
 
@@ -125,11 +139,11 @@ include 'menu/validate_login.php';
                         exit();
                     }
 
-                    $selected_product = isset($noduplicate) ? count($noduplicate) : count($product_id);
+                    //$selected_product = isset($noduplicate) ? count($noduplicate) : count($product_id);
                 }
             } catch (PDOException $exception) {
                 echo "<div class='alert alert-danger'>Unable to create the order.</div>";
-                //die('ERROR: ' . $exception->getMessage());
+                die('ERROR: ' . $exception->getMessage());
             }
         }
         ?>
@@ -139,11 +153,12 @@ include 'menu/validate_login.php';
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Customer Name</td>
-                    <td><select name='customer_id' class='form-select'>
+                    <td><input type="text" name="customer_name" id="customer_name" class="form-control" value="<?php echo $loggedInUsername; ?>" readonly /></td>
+                    <!--<td><select name='customer_id' class='form-select'>
                             <option value="">Please select your username</option>
-                            <?php
+                            
                             //in "customers" table中得到"customers_name"的data
-                            $query = "SELECT id, username FROM customers";
+                            /*$query = "SELECT id, username FROM customers";
                             $stmt = $con->prepare($query);
                             $stmt->execute();
                             // this is how to get number of rows returned
@@ -155,10 +170,10 @@ include 'menu/validate_login.php';
                                 $customerID = $customer['id'];
                                 $customerName = $customer['username'];
                                 echo "<option value='$customerID'>$customerName</option>";
-                            }
-                            ?>
+                            }*/
+                            
                         </select>
-                    </td>
+                    </td>-->
                 </tr>
             </table>
 

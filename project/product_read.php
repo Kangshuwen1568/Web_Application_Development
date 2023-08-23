@@ -101,16 +101,19 @@ include 'menu/validate_login.php';
                 echo "<td><img src='uploads/{$image}' alt='{$name}' width='100'></td>";
                 echo "<td>{$category_name}</td>";     // Display the Categoryname
                 echo "<td>{$description}</td>";
-                echo "<td>{$price}</td>";
+                //echo "<td>RM{$price}</td>";
+                echo "<td>RM " . number_format((float)$price, 2, '.', '') . "</td>";
+
 
 
                 if ($promotion_price < $price && ($promotion_price != 0)) {
                     echo "<td class='d-flex justify-content-end'>
                             <p class=' me-1 text-decoration-line-through'>" . number_format((float)$price, 2, '.', '') . "</p>
-                            <p>" . number_format((float)$promotion_price, 2, '.', '') . "</p>
+                            
+                            <p>RM" . number_format((float)$promotion_price, 2, '.', '') . "</p>
                         </td>";
                 } else {
-                    echo "<td class='text-end'>" . number_format((float)$price, 2, '.', '') . "</td>";
+                    echo "<td class='text-end'>RM" . number_format((float)$price, 2, '.', '') . "</td>";
                 }
 
                 //Action part table

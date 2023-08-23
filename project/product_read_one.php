@@ -77,11 +77,13 @@ include 'menu/validate_login.php';
             </tr>
             <tr>
                 <td>Price</td>
-                <td><?php echo htmlspecialchars(number_format((float)$price, 2, '.', ''), ENT_QUOTES);  ?></td>
+                <td>RM <?php echo number_format((float)$price, 2, '.', ''); ?></td>
             </tr>
             <tr>
                 <td>Promotion Price</td>
-                <td><?php echo htmlspecialchars(number_format((float)$promotion_price, 2, '.', ''), ENT_QUOTES);  ?></td>
+                <td>RM <?php echo number_format((float)$promotion_price, 2, '.', ''); ?></td>
+                <!--<td>RM <?php echo number_format((float)$price, 2, '.', ''); ?></td>-->
+
             </tr>
             <tr>
                 <td>Manufacture Date</td>

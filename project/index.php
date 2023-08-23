@@ -68,8 +68,8 @@ include 'menu/validate_login.php';
 
         <h2 class="container text-center mt-3">Latest & Highest Order Details</h2>
         <div class="container row m-auto gap-3">
-            <div class="col border border-dark border-3 p-5 text-center">
-                <h3>Latest Order ID and Summary</h3>
+            <div class="col border border-dark border-3 p-5">
+                <h3 class=" text-center">Latest Order ID and Summary</h3>
                 <p class="mt-3">Customer Name:
                     <?php
                     $latest_order_query = "SELECT order_summary.order_id, order_summary.customer_id, order_summary.order_date, 
@@ -95,8 +95,8 @@ include 'menu/validate_login.php';
                 </p>
 
             </div>
-            <div class="col border border-dark border-3 p-5 text-center">
-                <h3>Highest Purchased Amount Order</h3>
+            <div class="col border border-dark border-3 p-5">
+                <h3 class=" text-center">Highest Purchased Amount Order</h3>
                 <p class="mt-3"><span>Customer Name:</span>
                     <?php
                     $highest_order_query = "SELECT order_summary.order_id, order_summary.customer_id, order_summary.order_date, 

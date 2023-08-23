@@ -122,7 +122,7 @@ include 'menu/validate_login.php';
 
 
             // display the Total Order Amount below the table
-            echo "<h3>Total Order Amount: RM" . number_format($totalAmount, 2) . "</h3>";
+            echo "<h3 class='text-end'>Total Order Amount: RM" . number_format($totalAmount, 2) . "</h3>";
 
             echo "<a href='order_read.php' class='btn btn-danger'>Back to Order List</a>";
             echo "</div>";

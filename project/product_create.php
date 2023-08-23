@@ -59,12 +59,24 @@ $_SESSION['image'] = "product";
                 $errors[] = "Price must be number.";
             }
 
-            // check promotion price field is empty
-            if (empty($promotionPrice)) {
+            // Check if promotion price is provided and validate it if it's not empty
+            if (!empty($promotionPrice)) {
+                if (!is_numeric($promotionPrice)) {
+                    $errors[] = "Promotion price must be a valid number.";
+                } elseif ($promotionPrice >= $price) {
+                    $errors[] = "Promotion price must be cheaper than the original price.";
+                }
+            }
+
+            // check promotion price field
+            /*if (empty($promotionPrice)) {
                 $errors[] = "Promotion price is required.";
             } else if (!is_numeric($promotionPrice)) {
                 $errors[] = "Promotion price must be number.";
             }
+            if ($promotion_price >= $price) {
+                $errors[] = "Promotion price must be cheaper than the original price.";
+            }*/
 
             // check manufacture date field is empty
             if (empty($manufactureDate)) {
@@ -143,12 +155,12 @@ $_SESSION['image'] = "product";
                     <td><input type='text' name='description' class='form-control' /></td>
                 </tr>
                 <tr>
-                    <td>Price</td>
+                    <td>Price (RM)</td>
                     <td><input type='text' name='price' class='form-control' /></td>
                 </tr>
 
                 <tr>
-                    <td>Promotion_price</td>
+                    <td>Promotion_price (RM)</td>
                     <td><input type='text' name='promotion_price' class='form-control' /></td>
                 </tr>
 
