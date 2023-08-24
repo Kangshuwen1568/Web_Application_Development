@@ -1,5 +1,6 @@
 <?php
 include 'menu/validate_login.php';
+include 'menu/input_disabled.php';
 $_SESSION['image'] = "product";
 ?>
 <!DOCTYPE HTML>
@@ -23,53 +24,58 @@ $_SESSION['image'] = "product";
             <h1>Create Product</h1>
         </div>
 
+
         <!-- PHP insert code will be here -->
         <?php
 
-        date_default_timezone_set('Asia/Kuala_Lumpur');
-        if ($_POST) {
-            // include database connection
-            include 'config/database.php';
-            include 'file_upload.php';
-            $name = $_POST['name'];
-            $description = $_POST['description'];
-            $price = $_POST['price'];
-            $promotionPrice = $_POST['promotion_price'];
-            $category_id = $_POST['category_id'];
-            $manufactureDate = $_POST['manufacture_date'];
-            $expiredDate = $_POST['expired_date'];
+        // Check the customer's status before allowing the order creation process to proceed
+        if ($customer_status == 'inactive') {
+            echo "<div class='alert alert-danger'>Your account is inactive. Your account does not have permission.</div>";
+        } else {
+            if ($_POST) {
+                // include database connection
+                include 'config/database.php';
+                include 'file_upload.php';
+                date_default_timezone_set('Asia/Kuala_Lumpur');
+                $name = $_POST['name'];
+                $description = $_POST['description'];
+                $price = $_POST['price'];
+                $promotionPrice = $_POST['promotion_price'];
+                $category_id = $_POST['category_id'];
+                $manufactureDate = $_POST['manufacture_date'];
+                $expiredDate = $_POST['expired_date'];
 
-            // initialize an array to store error messages
-            $errors = array();
+                // initialize an array to store error messages
+                $errors = array();
 
-            // check name field is empty
-            if (empty($name)) {
-                $errors[] = "Name is required.";
-            }
-
-            // check description field is empty
-            if (empty($description)) {
-                $errors[] = "Description is required.";
-            }
-
-            // check price field is empty
-            if (empty($price)) {
-                $errors[] = "Price is required.";
-            } else if (!is_numeric($price)) {
-                $errors[] = "Price must be number.";
-            }
-
-            // Check if promotion price is provided and validate it if it's not empty
-            if (!empty($promotionPrice)) {
-                if (!is_numeric($promotionPrice)) {
-                    $errors[] = "Promotion price must be a valid number.";
-                } elseif ($promotionPrice >= $price) {
-                    $errors[] = "Promotion price must be cheaper than the original price.";
+                // check name field is empty
+                if (empty($name)) {
+                    $errors[] = "Name is required.";
                 }
-            }
 
-            // check promotion price field
-            /*if (empty($promotionPrice)) {
+                // check description field is empty
+                if (empty($description)) {
+                    $errors[] = "Description is required.";
+                }
+
+                // check price field is empty
+                if (empty($price)) {
+                    $errors[] = "Price is required.";
+                } else if (!is_numeric($price)) {
+                    $errors[] = "Price must be number.";
+                }
+
+                // Check if promotion price is provided and validate it if it's not empty
+                if (!empty($promotionPrice)) {
+                    if (!is_numeric($promotionPrice)) {
+                        $errors[] = "Promotion price must be a valid number.";
+                    } elseif ($promotionPrice >= $price) {
+                        $errors[] = "Promotion price must be cheaper than the original price.";
+                    }
+                }
+
+                // check promotion price field
+                /*if (empty($promotionPrice)) {
                 $errors[] = "Promotion price is required.";
             } else if (!is_numeric($promotionPrice)) {
                 $errors[] = "Promotion price must be number.";
@@ -78,69 +84,69 @@ $_SESSION['image'] = "product";
                 $errors[] = "Promotion price must be cheaper than the original price.";
             }*/
 
-            // check manufacture date field is empty
-            if (empty($manufactureDate)) {
-                $errors[] = "Manufacture date is required.";
-            }
-
-            // check expired date field is empty
-            if (empty($expiredDate)) {
-                $errors[] = "Expired date is required.";
-            }
-
-            // Check if the promotion price is not cheaper than the original price
-            if ($promotionPrice >= $price) {
-                $errors[] = "Promotion price must be cheaper than the original price.";
-            }
-
-            // Check if the expiration date is not earlier than the manufacturing date
-            if ($expiredDate <= $manufactureDate) {
-                $errors[] = "Expired date must be later than the manufacture date.";
-            }
-
-            // check if any errors occurred
-            if (!empty($errors)) {
-                $errorMessage = "<div class='alert alert-danger'>";
-                // display out the error messages
-                foreach ($errors as $error) {
-                    $errorMessage .= $error . "<br>";
+                // check manufacture date field is empty
+                if (empty($manufactureDate)) {
+                    $errors[] = "Manufacture date is required.";
                 }
-                $errorMessage .= "</div>";
-                echo $errorMessage;
-            } else {
-                try {
-                    // insert query
-                    $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, image=:image, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
-                    // prepare query for execution
-                    $stmt = $con->prepare($query);
 
-                    // bind the parameters
-                    $stmt->bindParam(':name', $name);
-                    $stmt->bindParam(':description', $description);
-                    $stmt->bindParam(':price', $price);
-                    $stmt->bindParam(':promotion_price', $promotionPrice);
-                    $stmt->bindParam(':image', $image);
-                    $stmt->bindParam(':category_id', $category_id);
-                    $stmt->bindParam(':manufacture_date', $manufactureDate);
-                    $stmt->bindParam(':expired_date', $expiredDate);
+                // check expired date field is empty
+                if (empty($expiredDate)) {
+                    $errors[] = "Expired date is required.";
+                }
 
-                    $created = date('Y-m-d H:i:s'); // get the current date and time
-                    $stmt->bindParam(':created', $created);
+                // Check if the promotion price is not cheaper than the original price
+                if ($promotionPrice >= $price) {
+                    $errors[] = "Promotion price must be cheaper than the original price.";
+                }
 
-                    // Execute the query
-                    if ($stmt->execute()) {
-                        echo "<div class='alert alert-success'>Record was saved.</div>";
-                    } else {
-                        echo "<div class='alert alert-danger'>Unable to save record.</div>";
+                // Check if the expiration date is not earlier than the manufacturing date
+                if ($expiredDate <= $manufactureDate) {
+                    $errors[] = "Expired date must be later than the manufacture date.";
+                }
+
+                // check if any errors occurred
+                if (!empty($errors)) {
+                    $errorMessage = "<div class='alert alert-danger'>";
+                    // display out the error messages
+                    foreach ($errors as $error) {
+                        $errorMessage .= $error . "<br>";
                     }
-                }
-                // show error
-                catch (PDOException $exception) {
-                    die('ERROR: ' . $exception->getMessage());
+                    $errorMessage .= "</div>";
+                    echo $errorMessage;
+                } else {
+                    try {
+                        // insert query
+                        $query = "INSERT INTO products SET name=:name, description=:description, price=:price, promotion_price=:promotion_price, image=:image, category_id=:category_id, manufacture_date=:manufacture_date, expired_date=:expired_date, created=:created";
+                        // prepare query for execution
+                        $stmt = $con->prepare($query);
+
+                        // bind the parameters
+                        $stmt->bindParam(':name', $name);
+                        $stmt->bindParam(':description', $description);
+                        $stmt->bindParam(':price', $price);
+                        $stmt->bindParam(':promotion_price', $promotionPrice);
+                        $stmt->bindParam(':image', $image);
+                        $stmt->bindParam(':category_id', $category_id);
+                        $stmt->bindParam(':manufacture_date', $manufactureDate);
+                        $stmt->bindParam(':expired_date', $expiredDate);
+
+                        $created = date('Y-m-d H:i:s'); // get the current date and time
+                        $stmt->bindParam(':created', $created);
+
+                        // Execute the query
+                        if ($stmt->execute()) {
+                            echo "<div class='alert alert-success'>Record was saved.</div>";
+                        } else {
+                            echo "<div class='alert alert-danger'>Unable to save record.</div>";
+                        }
+                    }
+                    // show error
+                    catch (PDOException $exception) {
+                        die('ERROR: ' . $exception->getMessage());
+                    }
                 }
             }
         }
-
         ?>
 
         <!-- html form here where the product information will be entered -->
@@ -148,30 +154,30 @@ $_SESSION['image'] = "product";
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Name</td>
-                    <td><input type='text' name='name' class='form-control' /></td>
+                    <td><input type='text' name='name' class='form-control' <?php echo $inputDisabled; ?> /></td>
                 </tr>
                 <tr>
                     <td>Description</td>
-                    <td><input type='text' name='description' class='form-control' /></td>
+                    <td><input type='text' name='description' class='form-control' <?php echo $inputDisabled; ?> /></td>
                 </tr>
                 <tr>
                     <td>Price (RM)</td>
-                    <td><input type='text' name='price' class='form-control' /></td>
+                    <td><input type='text' name='price' class='form-control' <?php echo $inputDisabled; ?> /></td>
                 </tr>
 
                 <tr>
                     <td>Promotion_price (RM)</td>
-                    <td><input type='text' name='promotion_price' class='form-control' /></td>
+                    <td><input type='text' name='promotion_price' class='form-control' <?php echo $inputDisabled; ?> /></td>
                 </tr>
 
                 <tr>
-                    <td>Photo</td>
-                    <td><input type="file" name="image" /></td>
+                    <td>Product Image</td>
+                    <td><input type="file" name="image" <?php echo $inputDisabled; ?> /></td>
                 </tr>
 
                 <tr>
                     <td>Category Name</td>
-                    <td><select class="form-select" name="category_id">
+                    <td><select class="form-select" name="category_id" <?php echo $inputDisabled; ?>>
                             <?php
                             include 'config/database.php';
                             //in "category" table中得到"category_name"的data
@@ -193,16 +199,16 @@ $_SESSION['image'] = "product";
 
                 <tr>
                     <td>Manufacture_date</td>
-                    <td><input type='date' name='manufacture_date' class='form-control' /></td>
+                    <td><input type='date' name='manufacture_date' class='form-control' <?php echo $inputDisabled; ?> /></td>
                 </tr>
                 <tr>
                     <td>Expired_date</td>
-                    <td><input type='date' name='expired_date' class='form-control' /></td>
+                    <td><input type='date' name='expired_date' class='form-control' <?php echo $inputDisabled; ?> /></td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>
-                        <input type='submit' value='Save' class='btn btn-primary' />
+                        <input type='submit' value='Save' class='btn btn-primary' <?php echo $inputDisabled; ?> />
                         <a href='product_read.php' class='btn btn-danger'>Back to read products</a>
                     </td>
                 </tr>
