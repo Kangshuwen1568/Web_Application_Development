@@ -92,9 +92,6 @@ include 'menu/validate_login.php';
                 // extract row
                 // this will make $row['firstname'] to just $firstname only
                 extract($row);
-
-
-
                 // calculate the total amount for the product based on promotion price or regular price
                 $productPrice = ($promotion_price > 0 && $promotion_price < $price) ? $promotion_price : $price;
                 $productTotalAmount = $productPrice * $quantity;
@@ -115,6 +112,7 @@ include 'menu/validate_login.php';
                 }
                 echo "<td class='text-end'>{$quantity}</td>";
                 echo "<td class='text-end'>RM" . number_format($productTotalAmount, 2) . "</td>"; // Display total amount with 2 decimal places
+
                 echo "</tr>";
             }
             // end table

@@ -46,7 +46,7 @@ include 'menu/validate_login.php';
             $query .= " WHERE customers.firstname LIKE :keyword OR customers.lastname LIKE :keyword";
             $searchKeyword = "%{$searchKeyword}%";
         }
-        $query .= " ORDER BY order_summary.order_id ASC";
+        $query .= " ORDER BY order_summary.order_id DESC";
         $stmt = $con->prepare($query); // prepare query for execution
         if (!empty($searchKeyword)) {
             $stmt->bindParam(':keyword', $searchKeyword);
@@ -73,7 +73,7 @@ include 'menu/validate_login.php';
             echo "<th>Order ID</th>";
             echo "<th>Customer Name</th>";
             echo "<th>Order Date</th>";
-            //echo "<th>Total Order Amount</th>";
+            echo "<th>Total Amount</th>";
             echo "<th>Action</th>";
             echo "</tr>";
 
@@ -83,12 +83,24 @@ include 'menu/validate_login.php';
                 // extract row
                 // this will make $row['firstname'] to just $firstname only
                 extract($row);
+                $total_amount_query = "SELECT SUM(IF(products.promotion_price > 0 AND products.promotion_price < products.price, 
+                                       products.promotion_price * order_details.quantity, 
+                                       products.price * order_details.quantity)) AS total_amount
+                        FROM order_details 
+                        INNER JOIN products ON order_details.product_id = products.id 
+                        WHERE order_details.order_id = :order_id";
+                $total_amount_stmt = $con->prepare($total_amount_query);
+                $total_amount_stmt->bindParam(":order_id", $order_id);
+                $total_amount_stmt->execute();
+                $total_amount_row = $total_amount_stmt->fetch(PDO::FETCH_ASSOC);
+                $total_amount = $total_amount_row['total_amount'];
                 // creating new table row per record
                 echo "<tr>";
                 echo "<td>{$order_id}</td>";
                 echo "<td>{$firstname} {$lastname}</td>";
                 echo "<td>{$order_date}</td>";
                 //echo "<td>{$totalAmount}</td>";
+                echo "<td class='text-end'>RM" . number_format($total_amount, 2) . "</td>";
                 echo "<td class='col-2'>";
                 // read one record
                 echo "<a href='order_detail_read.php?id={$order_id}' class='btn btn-info m-r-1em'>Read</a>";
