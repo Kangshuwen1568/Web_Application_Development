@@ -93,11 +93,13 @@ $_SESSION['image'] = "product";
                 // posted values
                 $name = htmlspecialchars(strip_tags($_POST['name']));
                 $description = htmlspecialchars(strip_tags($_POST['description']));
-                $price = htmlspecialchars(strip_tags($_POST['price']));
-                $promotion_price = htmlspecialchars(strip_tags($_POST['promotion_price']));
+                //$price = htmlspecialchars(strip_tags($_POST['price']));
+                //$promotion_price = htmlspecialchars(strip_tags($_POST['promotion_price']));
                 $category_id = htmlspecialchars(strip_tags($_POST['category_id']));
                 $manufacture_date = htmlspecialchars(strip_tags($_POST['manufacture_date']));
                 $expired_date = htmlspecialchars(strip_tags($_POST['expired_date']));
+                $price = floatval(str_replace(['RM', ',', ' '], '', $_POST['price']));
+                $promotion_price = floatval(str_replace(['RM', ',', ' '], '', $_POST['promotion_price']));
                 // initialize an array to store error messages
                 $errors = array();
                 // Check if the promotion price is not cheaper than the original price
@@ -160,19 +162,24 @@ $_SESSION['image'] = "product";
                     <td>Description</td>
                     <td><textarea name='description' class='form-control'><?php echo htmlspecialchars($description, ENT_QUOTES);  ?></textarea></td>
                 </tr>
+
                 <tr>
                     <td>Price</td>
-                    <td><input type='text' name='price' value="<?php echo htmlspecialchars($price, ENT_QUOTES);  ?>" class='form-control' /></td>
+                    <td><input type='text' name='price' value="RM <?php echo number_format($price, 2); ?>" class='form-control' /></td>
                 </tr>
 
                 <tr>
                     <td>Promotion price</td>
-                    <td><input type='text' name='promotion_price' value="<?php echo htmlspecialchars($promotion_price, ENT_QUOTES);  ?>" class='form-control' /></td>
+                    <td><input type='text' name='promotion_price' value="RM <?php echo number_format($promotion_price, 2); ?>" class='form-control' /></td>
                 </tr>
 
+
                 <tr>
-                    <td>Photo</td>
-                    <td><input type="file" name="image" /></td>
+                    <td>Product Image</td>
+                    <td>
+                        <img src="uploads/<?php echo $image ?>" alt="<?php echo $name ?>" width="100px"><br><br>
+                        <input type="file" name="image" />
+                    </td>
                 </tr>
 
                 <tr>

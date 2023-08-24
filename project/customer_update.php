@@ -176,7 +176,7 @@ $_SESSION['image'] = "customer";
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Username</td>
-                    <td><input type='text' name='username' value="<?php echo htmlspecialchars($username, ENT_QUOTES);  ?>" class='form-control' /></td>
+                    <td><input type='text' name='username' value="<?php echo htmlspecialchars($username, ENT_QUOTES);  ?>" class='form-control' readonly /></td>
                 </tr>
                 <tr>
                     <td>Change Password</td>
@@ -188,11 +188,11 @@ $_SESSION['image'] = "customer";
                 </tr>
                 <tr>
                     <td>Firstname</td>
-                    <td><input type='text' name='firstname' value="<?php echo htmlspecialchars($firstname, ENT_QUOTES);  ?>" class='form-control' /></td>
+                    <td><input type='text' name='firstname' value="<?php echo htmlspecialchars($firstname, ENT_QUOTES);  ?>" class='form-control' readonly /></td>
                 </tr>
                 <tr>
                     <td>Lastname</td>
-                    <td><input type='text' name='lastname' value="<?php echo htmlspecialchars($lastname, ENT_QUOTES);  ?>" class='form-control' /></td>
+                    <td><input type='text' name='lastname' value="<?php echo htmlspecialchars($lastname, ENT_QUOTES);  ?>" class='form-control' readonly /></td>
                 </tr>
                 <tr>
                     <td>Gender</td>
@@ -209,14 +209,15 @@ $_SESSION['image'] = "customer";
                     </td>
                 </tr>
 
+
                 <tr>
                     <td>Date of Birth</td>
-                    <td><input type='date' name='date_of_birth' value="<?php echo htmlspecialchars($date_of_birth, ENT_QUOTES);  ?>" class='form-control' /></td>
+                    <td><input type='date' name='date_of_birth' value="<?php echo htmlspecialchars($date_of_birth, ENT_QUOTES);  ?>" class='form-control' readonly /></td>
                 </tr>
 
                 <tr>
                     <td>email</td>
-                    <td><input type='text' name='email' value="<?php echo htmlspecialchars($email, ENT_QUOTES);  ?>" class='form-control' /></td>
+                    <td><input type='text' name='email' value="<?php echo htmlspecialchars($email, ENT_QUOTES);  ?>" class='form-control' readonly /></td>
                 </tr>
                 <tr>
                     <td>Account Status</td>
@@ -230,8 +231,12 @@ $_SESSION['image'] = "customer";
                     </td>
                 </tr>
                 <tr>
-                    <td>Photo</td>
-                    <td><input type="file" name="image" /></td>
+                    <td>Profile Image</td>
+                    <td>
+                        <img src="uploads/<?php echo $image ?>" alt="<?php echo $username ?>" width="100px"><br><br>
+                        <input type="file" name="image" />
+                    </td>
+
                 </tr>
                 <tr>
                     <td></td>
