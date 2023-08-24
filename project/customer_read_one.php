@@ -30,7 +30,7 @@ include 'menu/validate_login.php';
 
         //include database connection
         include 'config/database.php';
-        include 'file_upload.php';
+        //include 'file_upload.php';
         // read current record's data
         try {
             // prepare select query
@@ -82,9 +82,7 @@ include 'menu/validate_login.php';
             </tr>
             <tr>
                 <td>Profile Image</td>
-                <td>
-                    <img src="<?php echo htmlspecialchars($image, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($username, ENT_QUOTES); ?> " width='100'>
-                </td>
+                <td><img src="uploads/<?php echo $image; ?>" alt="<?php echo htmlspecialchars($username, ENT_QUOTES); ?>" width='100'></td>
             </tr>
             <tr>
                 <td>Gender</td>

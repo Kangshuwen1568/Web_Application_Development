@@ -30,7 +30,7 @@ include 'menu/validate_login.php';
 
         //include database connection
         include 'config/database.php';
-        include 'file_upload.php';
+        //include 'file_upload.php';
         // read current record's data
         try {
             // prepare select query
@@ -78,9 +78,7 @@ include 'menu/validate_login.php';
             </tr>
             <tr>
                 <td>Product Image</td>
-                <td>
-                    <img src="<?php echo htmlspecialchars($image, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($name, ENT_QUOTES); ?> " width='100'>
-                </td>
+                <td><img src="uploads/<?php echo $image; ?>" alt="<?php echo htmlspecialchars($name, ENT_QUOTES); ?>" width='100'></td>
             </tr>
 
             <tr>
@@ -90,7 +88,6 @@ include 'menu/validate_login.php';
             <tr>
                 <td>Promotion Price</td>
                 <td>RM <?php echo number_format((float)$promotion_price, 2, '.', ''); ?></td>
-                <!--<td>RM <?php echo number_format((float)$price, 2, '.', ''); ?></td>-->
 
             </tr>
             <tr>
@@ -113,8 +110,6 @@ include 'menu/validate_login.php';
                 </td>
             </tr>
         </table>
-
-
 
     </div> <!-- end .container -->
 
