@@ -80,6 +80,7 @@ include 'config/database.php';
             echo "<th>Lastname</th>";
             echo "<th>Image</th>";
             echo "<th>Email</th>";
+            echo "<th>Account Status</th>";
             echo "<th>Action</th>";
             echo "</tr>";
 
@@ -92,7 +93,8 @@ include 'config/database.php';
                 // creating new table row per record
                 echo "<tr>";
                 echo "<td>{$id}</td>";
-                echo "<td>{$username}</td>";
+                //echo "<td>{$username}</td>";
+                echo "<td><a class='link-underline-light link-dark' href='customer_read_one.php?id={$id}'>{$username}</a></td>";
                 echo "<td>{$firstname}</td>";
                 echo "<td>{$lastname}</td>";
                 echo "<td><img src='uploads/{$image}' alt='Image' width='100'></td>";
