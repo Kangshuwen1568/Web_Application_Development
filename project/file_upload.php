@@ -25,12 +25,13 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
         if ($imageWidth !== $imageHeight) {
             $file_upload_error_messages .= "<div>Only square size images are allowed.</div>";
         }
+
+        // Check maximum width and height
+        if ($imageWidth > 600 || $imageHeight > 600) {
+            $file_upload_error_messages .= "<div>Submitted images must not exceed the 600px width and 600px height limits.</div>";
+        }
     } else {
         $file_upload_error_messages .= "<div>Submitted file is not an image.</div>";
-    }
-
-    if ($check['width'] > 600 || $check['height'] > 600) {
-        $file_upload_error_messages .= "<div>Submitted files must not exceed the 600px width and 600px height limits.</div>";
     }
 
     // make sure certain file types are allowed
