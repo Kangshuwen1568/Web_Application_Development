@@ -70,7 +70,7 @@ include 'menu/validate_login.php';
 
             //creating our table heading
             echo "<tr>";
-            echo "<th>Order ID</th>";
+            //echo "<th>Order ID</th>";
             echo "<th>Customer Name</th>";
             echo "<th>Order Date</th>";
             echo "<th>Total Amount</th>";
@@ -96,8 +96,9 @@ include 'menu/validate_login.php';
                 $total_amount = $total_amount_row['total_amount'];
                 // creating new table row per record
                 echo "<tr>";
-                echo "<td>{$order_id}</td>";
-                echo "<td>{$firstname} {$lastname}</td>";
+                //echo "<td>{$order_id}</td>";
+                //echo "<td>{$firstname} {$lastname}</td>";
+                echo "<td><a class='link-underline-light link-dark' href='order_detail_read.php?id={$order_id}'>{$firstname} {$lastname}</a></td>";
                 echo "<td>{$order_date}</td>";
                 //echo "<td>{$totalAmount}</td>";
                 echo "<td class='text-end'>RM" . number_format($total_amount, 2) . "</td>";
