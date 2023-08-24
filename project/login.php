@@ -93,14 +93,20 @@ session_start();
                                 $_SESSION['username'] = $row['username'];
                                 header("Location: index.php");
                                 exit();
-                            } else {
+                            } elseif ($row['account_status'] == 'inactive') {
+                                // Inactive account
+                                $_SESSION['username'] = $row['username']; // Store username in session
+                                header("Location: index.php"); // Redirect to desired page after login
+                                exit();
+                                /*} else {
 
                                 // Inactive account
                                 echo "<div class='alert alert-danger'>Inactive account.</div>";
+                            }*/
+                            } else {
+                                // Incorrect password
+                                echo "<div class='alert alert-danger'>Incorrect password.</div>";
                             }
-                        } else {
-                            // Incorrect password
-                            echo "<div class='alert alert-danger'>Incorrect password.</div>";
                         }
                     }
                 } catch (PDOException $exception) { // show error
