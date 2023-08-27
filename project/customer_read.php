@@ -1,7 +1,7 @@
 <?php
 include 'menu/validate_login.php';
 include 'config/database.php';
-//include 'file_upload.php';
+include 'file_upload.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -46,7 +46,7 @@ include 'config/database.php';
 
         // select all data
         $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
-        $query = "SELECT id, username, firstname, lastname, email, account_status, image FROM customers ";
+        $query = "SELECT id, username, firstname, lastname, email, account_status, image FROM customers";
         if (!empty($search_keyword)) {
             $query .= " WHERE username LIKE :keyword OR firstname LIKE :keyword OR lastname LIKE :keyword OR email LIKE :keyword";
             $search_keyword = "%{$search_keyword}%";

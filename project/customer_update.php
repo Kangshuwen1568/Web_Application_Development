@@ -2,6 +2,7 @@
 include 'menu/validate_login.php';
 
 $_SESSION['image'] = "customer";
+$target_dir = "uploads/"; // Initialize the target directory variable
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -86,6 +87,7 @@ $_SESSION['image'] = "customer";
 
         <!-- PHP post to update record will be here -->
         <?php
+        $file_upload_error_messages = "";
         // check if form was submitted
         if ($_POST) {
             try {
@@ -131,28 +133,54 @@ $_SESSION['image'] = "customer";
 
                 // Check if a new image is uploaded
                 if (!empty($_FILES["image"]["name"])) {
-                    $target_dir = "uploads/";
+                    //$target_dir = "uploads/";
                     $target_file = $target_dir . basename($_FILES["image"]["name"]);
                     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
                     // Check if the uploaded file is an image
                     $allowed_extensions = array("jpg", "jpeg", "png", "gif");
                     if (!in_array($imageFileType, $allowed_extensions)) {
-                        $errors[] = "Only JPG, JPEG, PNG, and GIF files are allowed.";
+                        $file_upload_error_messages .= "Only JPG, JPEG, PNG, and GIF files are allowed.<br>";
                     } else {
+                        // Additional validation for image dimensions and size
+                        list($width, $height) = getimagesize($_FILES["image"]["tmp_name"]);
+                        if ($width !== $height) {
+                            $file_upload_error_messages .= "Only square images are allowed.<br>";
+                        }
+
+                        // Check maximum width and height
+                        if ($width > 600 || $height > 600) {
+                            $file_upload_error_messages .= "Submitted images must not exceed the 600px width and 600px height limits.<br>";
+                        }
+
+                        // Generate a unique filename
                         $image = sha1_file($_FILES["image"]["tmp_name"]) . "-" . basename($_FILES["image"]["name"]);
+
+                        // Delete the old image file if it's not the default image and exists
+                        if ($old_image !== "user.png" && file_exists($target_dir . $old_image)) {
+                            unlink($target_dir . $old_image);
+                        }
+
+                        if ($_FILES["image"]["size"] > (512000)) {
+                            $file_upload_error_messages .= "Image size should not exceed 512KB.<br>";
+                        }
 
                         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image)) {
                             // Image uploaded successfully
                         } else {
-                            $errors[] = "Error uploading the image.";
+                            $file_upload_error_messages .= "Error uploading the image.<br>";
                         }
                     }
                 } else {
                     // If no new image is uploaded, keep the old image filename
-                    $image = $old_image;
+                    if ($old_image !== "uploads/user.png") {
+                        // Delete the old image file if it's not the default image and exists
+                        if (file_exists($target_dir . $old_image)) {
+                            unlink($target_dir . $old_image);
+                        }
+                    }
+                    $image = "user.png"; // Set to default image filename
                 }
-
 
                 // check if any errors occurred
                 if (!empty($errors)) {
@@ -164,28 +192,35 @@ $_SESSION['image'] = "customer";
                     $errorMessage .= "</div>";
                     echo $errorMessage;
                 } else {
+                    if (empty($file_upload_error_messages)) {
+                        // bind the parameters
+                        $stmt->bindParam(':username', $username);
+                        $stmt->bindParam(':firstname', $firstname);
+                        $stmt->bindParam(':lastname', $lastname);
+                        $stmt->bindParam(':gender', $gender);
+                        //$stmt->bindParam(':password', $hashed_password); // Use the updated hashed password
+                        $stmt->bindParam(':date_of_birth', $date_of_birth);
+                        $stmt->bindParam(':email', $email);
+                        $stmt->bindParam(':account_status', $account_status);
+                        $stmt->bindParam(':image', $image);
+                        $stmt->bindParam(':id', $id);
 
-                    // bind the parameters
-                    $stmt->bindParam(':username', $username);
-                    $stmt->bindParam(':firstname', $firstname);
-                    $stmt->bindParam(':lastname', $lastname);
-                    $stmt->bindParam(':gender', $gender);
-                    //$stmt->bindParam(':password', $hashed_password); // Use the updated hashed password
-                    $stmt->bindParam(':date_of_birth', $date_of_birth);
-                    $stmt->bindParam(':email', $email);
-                    $stmt->bindParam(':account_status', $account_status);
-                    $stmt->bindParam(':image', $image);
-                    $stmt->bindParam(':id', $id);
+                        if (isset($hashed_password)) {
+                            $stmt->bindParam(':password', $hashed_password);
+                        }
 
-                    if (isset($hashed_password)) {
-                        $stmt->bindParam(':password', $hashed_password);
-                    }
-
-                    // Execute the query
-                    if ($stmt->execute()) {
-                        echo "<div class='alert alert-success'>Record was updated.</div>";
+                        // Execute the query
+                        if ($stmt->execute()) {
+                            echo "<div class='alert alert-success'>Record was updated.</div>";
+                        } else {
+                            echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
+                        }
                     } else {
-                        echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
+                        // Display image-related error messages
+                        echo "<div class='alert alert-danger'>";
+                        echo "<div>{$file_upload_error_messages}</div>";
+                        echo "<div>Update the record to upload photo.</div>";
+                        echo "</div>";
                     }
                 }
                 // show errors

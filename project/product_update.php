@@ -1,6 +1,7 @@
 <?php
 include 'menu/validate_login.php';
 $_SESSION['image'] = "product";
+$target_dir = "uploads/"; // Initialize the target directory variable
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -43,7 +44,6 @@ $_SESSION['image'] = "product";
         </div>
         <!-- PHP read record by ID will be here-->
         <?php
-        include 'file_upload.php';
         // get passed parameter value, in this case, the record ID
         // isset() is a PHP function used to verify if a value is there or not
         $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: Record ID not found.');
@@ -51,7 +51,7 @@ $_SESSION['image'] = "product";
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT id, name, description, price, promotion_price, category_id, manufacture_date, expired_date FROM products WHERE id = ? LIMIT 0,1";
+            $query = "SELECT id, name, description, price, promotion_price, category_id, manufacture_date, expired_date, image FROM products WHERE id = ? LIMIT 0,1";
             $stmt = $con->prepare($query);
 
             // this is the first question mark
@@ -71,6 +71,9 @@ $_SESSION['image'] = "product";
             $category_id = $row['category_id'];
             $manufacture_date = $row['manufacture_date'];
             $expired_date = $row['expired_date'];
+            $image = $row['image'];
+            // Get the old image value from the database
+            $old_image = $image;
         }
 
         // show error
@@ -78,9 +81,8 @@ $_SESSION['image'] = "product";
             die('ERROR: ' . $exception->getMessage());
         }
         ?>
-
-        <!-- PHP post to update record will be here -->
         <?php
+        $file_upload_error_messages = "";
         // check if form was submitted
         if ($_POST) {
             try {
@@ -112,6 +114,57 @@ $_SESSION['image'] = "product";
                     $errors[] = "Expired date must be later than the manufacture date.";
                 }
 
+                // Check if a new image is uploaded
+                if (!empty($_FILES["image"]["name"])) {
+                    //$target_dir = "uploads/";
+                    $target_file = $target_dir . basename($_FILES["image"]["name"]);
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    // Check if the uploaded file is an image
+                    $allowed_extensions = array("jpg", "jpeg", "png", "gif");
+                    if (!in_array($imageFileType, $allowed_extensions)) {
+                        $file_upload_error_messages .= "Only JPG, JPEG, PNG, and GIF files are allowed.<br>";
+                    } else {
+                        // Additional validation for image dimensions and size
+                        list($width, $height) = getimagesize($_FILES["image"]["tmp_name"]);
+                        if ($width !== $height) {
+                            $file_upload_error_messages .= "Only square images are allowed.<br>";
+                        }
+
+                        // Check maximum width and height
+                        if ($width > 600 || $height > 600) {
+                            $file_upload_error_messages .= "Only square images are allowed.<br>";
+                        }
+
+                        // Generate a unique filename
+                        $image = sha1_file($_FILES["image"]["tmp_name"]) . "-" . basename($_FILES["image"]["name"]);
+
+                        // Delete the old image file if it's not the default image and exists
+                        if ($old_image !== "product_image_coming_soon.jpg" && file_exists($target_dir . $old_image)) {
+                            unlink($target_dir . $old_image);
+                        }
+
+                        if ($_FILES["image"]["size"] > (512000)) {
+                            $file_upload_error_messages .= "Image size should not exceed 512KB.<br>";
+                        }
+
+                        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image)) {
+                            // Image uploaded successfully
+                        } else {
+                            $file_upload_error_messages .= "Error uploading the image.<br>";
+                        }
+                    }
+                } else {
+                    // If no new image is uploaded, keep the old image filename
+                    if ($old_image !== "uploads/product_image_coming_soon.jpg") {
+                        // Delete the old image file if it's not the default image and exists
+                        if (file_exists($target_dir . $old_image)) {
+                            unlink($target_dir . $old_image);
+                        }
+                    }
+                    $image = "product_image_coming_soon.jpg"; // Set to default image filename
+                }
+
                 // check if any errors occurred
                 if (!empty($errors)) {
                     $errorMessage = "<div class='alert alert-danger'>";
@@ -122,33 +175,37 @@ $_SESSION['image'] = "product";
                     $errorMessage .= "</div>";
                     echo $errorMessage;
                 } else {
-
-                    // bind the parameters
-                    $stmt->bindParam(':name', $name);
-                    $stmt->bindParam(':description', $description);
-                    $stmt->bindParam(':price', $price);
-                    $stmt->bindParam(':promotion_price', $promotion_price);
-                    $stmt->bindParam(':category_id', $category_id);
-                    $stmt->bindParam(':manufacture_date', $manufacture_date);
-                    $stmt->bindParam(':expired_date', $expired_date);
-                    $stmt->bindParam(':image', $image);
-                    $stmt->bindParam(':id', $id);
-                    // Execute the query
-                    if ($stmt->execute()) {
-                        echo "<div class='alert alert-success'>Record was updated.</div>";
+                    if (empty($file_upload_error_messages)) {
+                        //bind the parameters
+                        $stmt->bindParam(':name', $name);
+                        $stmt->bindParam(':description', $description);
+                        $stmt->bindParam(':price', $price);
+                        $stmt->bindParam(':promotion_price', $promotion_price);
+                        $stmt->bindParam(':category_id', $category_id);
+                        $stmt->bindParam(':manufacture_date', $manufacture_date);
+                        $stmt->bindParam(':expired_date', $expired_date);
+                        $stmt->bindParam(':image', $image);
+                        $stmt->bindParam(':id', $id);
+                        // Execute the query
+                        if ($stmt->execute()) {
+                            echo "<div class='alert alert-success'>Record was updated.</div>";
+                        } else {
+                            echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
+                        }
                     } else {
-                        echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
+                        // Display image-related error messages
+                        echo "<div class='alert alert-danger'>";
+                        echo "<div>{$file_upload_error_messages}</div>";
+                        echo "<div>Update the record to upload photo.</div>";
+                        echo "</div>";
                     }
                 }
-            }
-            // show errors
-            catch (PDOException $exception) {
+            } catch (PDOException $exception) {
                 die('ERROR: ' . $exception->getMessage());
             }
         }
 
         ?>
-
 
         <!--HTML form to update record will be here -->
         <!--we have our html form here where new record information can be updated-->
@@ -177,7 +234,8 @@ $_SESSION['image'] = "product";
                 <tr>
                     <td>Product Image</td>
                     <td>
-                        <img src="uploads/<?php echo $image ?>" alt="<?php echo $name ?>" width="100px"><br><br>
+                        <img src="uploads/<?php echo htmlspecialchars($image, ENT_QUOTES); ?>" width="100px">
+                        <br><br>
                         <input type="file" name="image" />
                     </td>
                 </tr>

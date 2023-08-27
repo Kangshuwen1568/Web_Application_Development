@@ -61,7 +61,7 @@ if (!empty($_FILES["image"]["name"])) {   // if image is not empty, try to uploa
         // it means there are no errors, so try to upload the file
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
             // it means photo was uploaded
-
+            //echo "Image successfully uploaded to: " . $target_file;
         } else {
             echo "<div class='alert alert-danger'>";
             echo "<div>Unable to upload photo.</div>";

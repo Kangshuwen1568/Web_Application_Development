@@ -11,10 +11,10 @@ try {
     $get_product_image_stmt = $con->prepare($get_product_image_query);
     $get_product_image_stmt->bindParam(1, $id);
     $get_product_image_stmt->execute();
-    $product_image = $get_product_image_stmt->fetchColumn();
+    $product_image = "uploads/" . $get_product_image_stmt->fetchColumn(); // Add "uploads/" prefix
 
-    // Delete the product image file if it exists
-    if (!empty($product_image) && file_exists($product_image)) {
+    // Delete the product image file if it exists and is not the default image
+    if ($product_image !== "uploads/product_image_coming_soon.jpg" && file_exists($product_image)) {
         unlink($product_image);
     }
 
