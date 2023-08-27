@@ -18,7 +18,7 @@ session_start();
         <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
                 <!--logo-->
-                <a class="navbar-brand">SW</a>
+                <a class="navbar-brand">E-GROCERY</a>
             </div>
         </nav>
 
@@ -43,15 +43,36 @@ session_start();
                 $errors[] = "Password is required.";
             }
 
-            // check if any errors occurred
-            /*if (!empty($errors)) {
-                $errorMessage = "<div class='alert alert-danger'>";
-                // display out the error messages
-                foreach ($errors as $error) {
-                    $errorMessage .= $error . "<br>";
+            try {
+                // select query
+                $query = "SELECT id, username, password, email, account_status FROM customers WHERE username=:username_email OR email=:username_email";
+                // prepare query for execution
+                $stmt = $con->prepare($query);
+                // bind the parameters
+                $stmt->bindParam(':username_email', $username);
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$row) {
+                    // Username/email not found
+                    if (!empty($username) && !empty($password)) {
+                        $errors[] = "Username/email not found.";
+                    }
+                } else {
+                    // Check if the entered password matches the hashed password from the database
+                    if (!password_verify($password, $row['password'])) {
+                        // Incorrect password
+                        $errors[] = "Incorrect password.";
+                    } else {
+                        // Login successful
+                        $_SESSION['username'] = $row['username'];
+                        header("Location: index.php");
+                        exit();
+                    }
                 }
-                $errorMessage .= "</div>";
-                echo $errorMessage;*/
+            } catch (PDOException $exception) { // show error
+                die('ERROR: ' . $exception->getMessage());
+            }
 
             if (!empty($errors)) {
                 $errorMessage = "<ul>";
@@ -62,56 +83,14 @@ session_start();
                 $errorMessage .= "</ul>";
 
                 echo "
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var errorText = document.getElementById('errorText');
-                    errorText.innerHTML = '{$errorMessage}';
-                    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-                    errorModal.show();
-                });
-            </script>";
-            } else {
-                try {
-                    // select query
-                    $query = "SELECT id, username, password, email, account_status FROM customers WHERE username=:username_email OR email=:username_email";
-                    // prepare query for execution
-                    $stmt = $con->prepare($query);
-                    // bind the parameters
-                    $stmt->bindParam(':username_email', $username);
-                    $stmt->execute();
-                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                    if (!$row) {
-                        // Username/email not found
-                        echo "<div class='alert alert-danger'>Username/email not found.</div>";
-                    } else {
-                        // Check if the entered password matches the hashed password from the database
-                        if (password_verify($password, $row['password'])) {  //$password（user打的），$row['password']
-                            // Check if the account is active
-                            if ($row['account_status'] == 'active') {
-                                // Login successful
-                                $_SESSION['username'] = $row['username'];
-                                header("Location: index.php");
-                                exit();
-                            } elseif ($row['account_status'] == 'inactive') {
-                                // Inactive account
-                                $_SESSION['username'] = $row['username']; // Store username in session
-                                header("Location: index.php"); // Redirect to desired page after login
-                                exit();
-                                /*} else {
-
-                                // Inactive account
-                                echo "<div class='alert alert-danger'>Inactive account.</div>";
-                            }*/
-                            } else {
-                                // Incorrect password
-                                echo "<div class='alert alert-danger'>Incorrect password.</div>";
-                            }
-                        }
-                    }
-                } catch (PDOException $exception) { // show error
-                    die('ERROR: ' . $exception->getMessage());
-                }
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var errorText = document.getElementById('errorText');
+                        errorText.innerHTML = '{$errorMessage}';
+                        var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                        errorModal.show();
+                    });
+                </script>";
             }
         }
         ?>

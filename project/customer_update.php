@@ -54,7 +54,7 @@ $target_dir = "uploads/"; // Initialize the target directory variable
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT username, password, firstname, lastname, gender, date_of_birth, email, account_status, image FROM customers WHERE id = ? LIMIT 0,1";
+            $query = "SELECT id, username, firstname, lastname, gender, date_of_birth, email, account_status, image FROM customers WHERE id = ? LIMIT 1";
             $stmt = $con->prepare($query);
 
             // this is the first question mark
@@ -70,6 +70,7 @@ $target_dir = "uploads/"; // Initialize the target directory variable
             $username = $row['username'];
             $firstname = $row['firstname'];
             $lastname = $row['lastname'];
+            //$password = $row['password'];
             $gender = $row['gender'];
             $date_of_birth = $row['date_of_birth'];
             $email = $row['email'];
@@ -94,7 +95,14 @@ $target_dir = "uploads/"; // Initialize the target directory variable
                 // write update query
                 // in this case, it seemed like we have so many fields to pass and
                 // it is better to label them and not use question marks
-                $query = "UPDATE customers SET username=:username, firstname=:firstname, lastname=:lastname, image=:image, gender=:gender, date_of_birth=:date_of_birth, email=:email, account_status=:account_status WHERE id = :id";
+                $query = "UPDATE customers SET username=:username, firstname=:firstname, lastname=:lastname, image=:image, gender=:gender, date_of_birth=:date_of_birth, email=:email, account_status=:account_status";
+
+                // Check if password update is required
+                if (!empty($_POST['new_password'])) {
+                    $query .= ", password=:password";
+                    $hashed_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+                }
+                $query .= " WHERE id=:id";
                 // prepare query for excecution
                 $stmt = $con->prepare($query);
                 // posted values
@@ -122,7 +130,7 @@ $target_dir = "uploads/"; // Initialize the target directory variable
                         $errors[] = "New passwords do not match.";
                     } else {
                         // If the password fields are not empty and valid, include password update in the query
-                        $query .= ", password=:password";
+                        //$query .= ", password=:password";  // Add password update part to the query
                         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
                     }
                 }
@@ -153,16 +161,16 @@ $target_dir = "uploads/"; // Initialize the target directory variable
                             $file_upload_error_messages .= "Submitted images must not exceed the 600px width and 600px height limits.<br>";
                         }
 
+                        if ($_FILES["image"]["size"] > (512000)) {
+                            $file_upload_error_messages .= "Image size should not exceed 512KB.<br>";
+                        }
+
                         // Generate a unique filename
                         $image = sha1_file($_FILES["image"]["tmp_name"]) . "-" . basename($_FILES["image"]["name"]);
 
                         // Delete the old image file if it's not the default image and exists
                         if ($old_image !== "user.png" && file_exists($target_dir . $old_image)) {
                             unlink($target_dir . $old_image);
-                        }
-
-                        if ($_FILES["image"]["size"] > (512000)) {
-                            $file_upload_error_messages .= "Image size should not exceed 512KB.<br>";
                         }
 
                         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image)) {
@@ -173,13 +181,7 @@ $target_dir = "uploads/"; // Initialize the target directory variable
                     }
                 } else {
                     // If no new image is uploaded, keep the old image filename
-                    if ($old_image !== "uploads/user.png") {
-                        // Delete the old image file if it's not the default image and exists
-                        if (file_exists($target_dir . $old_image)) {
-                            unlink($target_dir . $old_image);
-                        }
-                    }
-                    $image = "user.png"; // Set to default image filename
+                    $image = $old_image;
                 }
 
                 // check if any errors occurred
@@ -198,16 +200,23 @@ $target_dir = "uploads/"; // Initialize the target directory variable
                         $stmt->bindParam(':firstname', $firstname);
                         $stmt->bindParam(':lastname', $lastname);
                         $stmt->bindParam(':gender', $gender);
-                        //$stmt->bindParam(':password', $hashed_password); // Use the updated hashed password
                         $stmt->bindParam(':date_of_birth', $date_of_birth);
                         $stmt->bindParam(':email', $email);
                         $stmt->bindParam(':account_status', $account_status);
                         $stmt->bindParam(':image', $image);
-                        $stmt->bindParam(':id', $id);
+                        //$stmt->bindParam(':password', $hashed_password); // Always bind password, even if it's not updated
 
-                        if (isset($hashed_password)) {
+
+                        // Only bind password if it's being updated
+                        //if (isset($hashed_password)) {
+                        //$stmt->bindParam(':password', $hashed_password);
+                        //}
+
+                        // Only bind password if it's being updated
+                        if (!empty($_POST['new_password'])) {
                             $stmt->bindParam(':password', $hashed_password);
                         }
+                        $stmt->bindParam(':id', $id);
 
                         // Execute the query
                         if ($stmt->execute()) {

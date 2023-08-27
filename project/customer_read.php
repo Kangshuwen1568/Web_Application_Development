@@ -1,7 +1,7 @@
 <?php
 include 'menu/validate_login.php';
 include 'config/database.php';
-include 'file_upload.php';
+
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -74,7 +74,7 @@ include 'file_upload.php';
 
             //creating our table heading
             echo "<tr>";
-            echo "<th>ID</th>";
+            //echo "<th>ID</th>";
             echo "<th>Username</th>";
             echo "<th>Firstname</th>";
             echo "<th>Lastname</th>";
@@ -92,7 +92,7 @@ include 'file_upload.php';
                 extract($row);
                 // creating new table row per record
                 echo "<tr>";
-                echo "<td>{$id}</td>";
+                //echo "<td>{$id}</td>";
                 //echo "<td>{$username}</td>";
                 echo "<td><a class='link-underline-light link-dark' href='customer_read_one.php?id={$id}'>{$username}</a></td>";
                 echo "<td>{$firstname}</td>";
