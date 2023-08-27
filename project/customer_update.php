@@ -1,5 +1,6 @@
 <?php
 include 'menu/validate_login.php';
+
 $_SESSION['image'] = "customer";
 ?>
 <!DOCTYPE HTML>
@@ -35,26 +36,24 @@ $_SESSION['image'] = "customer";
     <div class="container">
         <?php
         include 'menu/navbar.php';
-        // include database connection
-        include 'config/database.php';
         ?>
         <div class="page-header">
             <h1>Update Customer</h1>
         </div>
         <!-- PHP read record by ID will be here-->
         <?php
-        include 'file_upload.php';
+        //include 'file_upload.php';
         // get passed parameter value, in this case, the record ID
         // isset() is a PHP function used to verify if a value is there or not
         $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: Record ID not found.');
 
         //include database connection
         include 'config/database.php';
-
+        //include 'file_upload.php';
         // read current record's data
         try {
             // prepare select query
-            $query = "SELECT username, password, firstname, lastname, gender, date_of_birth, email, account_status FROM customers WHERE id = ? LIMIT 0,1";
+            $query = "SELECT username, password, firstname, lastname, gender, date_of_birth, email, account_status, image FROM customers WHERE id = ? LIMIT 0,1";
             $stmt = $con->prepare($query);
 
             // this is the first question mark
@@ -74,6 +73,9 @@ $_SESSION['image'] = "customer";
             $date_of_birth = $row['date_of_birth'];
             $email = $row['email'];
             $account_status = $row['account_status'];
+            $image = $row['image'];
+            // Get the old image value from the database
+            $old_image = $image;
         }
 
         // show error
@@ -107,9 +109,8 @@ $_SESSION['image'] = "customer";
 
                 // initialize an array to store error messages
                 $errors = array();
+
                 // Check if the password fields are not empty and valid
-
-
                 if (!empty($old_password) && !empty($new_password) && !empty($confirm_password)) {
                     if (strlen($new_password) < 6) {
                         $errors[] = "New password should be at least 6 characters.";
@@ -127,6 +128,31 @@ $_SESSION['image'] = "customer";
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $errors[] = "Invalid email format.";
                 }
+
+                // Check if a new image is uploaded
+                if (!empty($_FILES["image"]["name"])) {
+                    $target_dir = "uploads/";
+                    $target_file = $target_dir . basename($_FILES["image"]["name"]);
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    // Check if the uploaded file is an image
+                    $allowed_extensions = array("jpg", "jpeg", "png", "gif");
+                    if (!in_array($imageFileType, $allowed_extensions)) {
+                        $errors[] = "Only JPG, JPEG, PNG, and GIF files are allowed.";
+                    } else {
+                        $image = sha1_file($_FILES["image"]["tmp_name"]) . "-" . basename($_FILES["image"]["name"]);
+
+                        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image)) {
+                            // Image uploaded successfully
+                        } else {
+                            $errors[] = "Error uploading the image.";
+                        }
+                    }
+                } else {
+                    // If no new image is uploaded, keep the old image filename
+                    $image = $old_image;
+                }
+
 
                 // check if any errors occurred
                 if (!empty($errors)) {
@@ -233,7 +259,8 @@ $_SESSION['image'] = "customer";
                 <tr>
                     <td>Profile Image</td>
                     <td>
-                        <img src="uploads/<?php echo $image ?>" alt="<?php echo $username ?>" width="100px"><br><br>
+                        <img src="uploads/<?php echo htmlspecialchars($image, ENT_QUOTES); ?>" width="100px">
+                        <br><br>
                         <input type="file" name="image" />
                     </td>
 

@@ -11,10 +11,10 @@ try {
     $get_customer_image_stmt = $con->prepare($get_product_image_query);
     $get_customer_image_stmt->bindParam(1, $id);
     $get_customer_image_stmt->execute();
-    $customer_image = $get_customer_image_stmt->fetchColumn();
+    $customer_image = "uploads/" . $get_customer_image_stmt->fetchColumn(); // Add "uploads/" prefix
 
-    // Delete the customer image file if it exists
-    if (!empty($customer_image) && file_exists($customer_image)) {
+    // Delete the customer image file if it exists and is not the default image
+    if ($customer_image !== "uploads/user.png" && file_exists($customer_image)) {
         unlink($customer_image);
     }
 
