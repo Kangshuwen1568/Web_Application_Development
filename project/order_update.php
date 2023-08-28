@@ -1,6 +1,5 @@
 <?php
 include 'menu/validate_login.php';
-include 'menu/input_disabled.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -70,94 +69,97 @@ include 'menu/input_disabled.php';
         } catch (PDOException $exception) {
             die('ERROR: ' . $exception->getMessage());
         }
-        if ($customer_status == 'inactive') {
-            echo "<div class='alert alert-danger'>Your account is inactive. Your account does not have permission.</div>";
-        } else {
-            // Initialize an array to store error messages
 
-            if ($_POST) {
-                try {
-                    // Retrieve existing order date
-                    $get_order_date_query = "SELECT order_date FROM order_summary WHERE order_id = :id";
-                    $get_order_date_stmt = $con->prepare($get_order_date_query);
-                    $get_order_date_stmt->bindParam(":id", $id);
-                    $get_order_date_stmt->execute();
-                    $existing_order_date = $get_order_date_stmt->fetchColumn();
-                    // Retrieve form data
-                    //$customer_id = $_POST['customer_id'];
-                    //$order_date = $_POST['order_date'];
-                    $product_id = $_POST['product_id'];
-                    $quantity = $_POST['quantity'];
-                    $errors = array();
-                    // Check if at least one product is selected
-                    if (empty($product_id)) {
-                        $errors[] = "Please select a product.";
-                    }
-                    // Check if the quantities are valid (greater than 0)
-                    foreach ($quantity as $quantityValue) {
-                        if ($quantityValue <= 0) {
-                            $errors[] = "Quantity must be greater than 0.";
-                            break;  // Stop the loop if a quantity is invalid
-                        }
-                    }
+        // Initialize an array to store error messages
 
-                    // Remove duplicated products and corresponding quantities
-                    $noduplicate = array_unique($product_id);
-                    if (sizeof($noduplicate) != sizeof($product_id)) {
-                        foreach ($product_id as $key => $val) {
-                            if (!in_array($val, $noduplicate)) {
-                                $errors[] = "Duplicated products have been chosen.";
-                                unset($product_id[$key]);
-                                unset($quantity[$key]);
-                            }
-                        }
-                    }
-
-                    // Check if any errors occurred
-                    if (!empty($errors)) {
-                        $errorMessage = "<div class='alert alert-danger'>";
-                        foreach ($errors as $error) {
-                            $errorMessage .= $error . "<br>";
-                        }
-                        $errorMessage .= "</div>";
-                        echo $errorMessage;
-                    } else {
-                        // Update order summary 
-                        $update_summary_query = "UPDATE order_summary SET order_date=:order_date WHERE order_id=:id";
-                        // Prepare query for execution
-                        $update_summary_stmt = $con->prepare($update_summary_query);
-                        // Bind the parameters and execute
-                        $update_summary_stmt->bindParam(":order_date", $existing_order_date);
-                        $update_summary_stmt->bindParam(":id", $id);
-                        $update_summary_stmt->execute();
-
-                        // Delete existing order details
-                        $delete_details_query = "DELETE FROM order_details WHERE order_id=:id";
-                        $delete_details_stmt = $con->prepare($delete_details_query);
-                        $delete_details_stmt->bindParam(":id", $id);
-                        $delete_details_stmt->execute();
-
-                        // Insert updated order details into the order_details table
-                        $insert_details_query = "INSERT INTO order_details SET order_id=:order_id, product_id=:product_id, quantity=:quantity";
-
-
-                        for ($i = 0; $i < count($product_id); $i++) {
-                            $stmt_details = $con->prepare($insert_details_query);
-                            $stmt_details->bindParam(':order_id', $id);
-                            $stmt_details->bindParam(':product_id', $product_id[$i]);
-                            $stmt_details->bindParam(':quantity', $quantity[$i]);
-                            $stmt_details->execute();
-                        }
-                        echo "<div class='alert alert-success'>Order updated successfully.</div>";
-                    }
-                    $selected_product = isset($noduplicate) ? count($noduplicate) : count($product_id);
+        if ($_POST) {
+            try {
+                // Retrieve existing order date
+                $get_order_date_query = "SELECT order_date FROM order_summary WHERE order_id = :id";
+                $get_order_date_stmt = $con->prepare($get_order_date_query);
+                $get_order_date_stmt->bindParam(":id", $id);
+                $get_order_date_stmt->execute();
+                $existing_order_date = $get_order_date_stmt->fetchColumn();
+                // Retrieve form data
+                //$customer_id = $_POST['customer_id'];
+                //$order_date = $_POST['order_date'];
+                $product_id = $_POST['product_id'];
+                $quantity = $_POST['quantity'];
+                $errors = array();
+                // Check if at least one product is selected
+                if (empty($product_id)) {
+                    $errors[] = "Please select a product.";
                 }
-                // show error
-                catch (PDOException $exception) {
-                    echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
+                // Check if at least one product is selected
+                $selectedProductCount = count(array_filter($product_id));
+                if ($selectedProductCount === 0) {
+                    $errors[] = "Please select at least one product.";
                 }
+                // Check if the quantities are valid (greater than 0)
+                foreach ($quantity as $quantityValue) {
+                    if ($quantityValue <= 0) {
+                        $errors[] = "Quantity must be greater than 0.";
+                        break;  // Stop the loop if a quantity is invalid
+                    }
+                }
+
+                // Remove duplicated products and corresponding quantities
+                $noduplicate = array_unique($product_id);
+                if (sizeof($noduplicate) != sizeof($product_id)) {
+                    foreach ($product_id as $key => $val) {
+                        if (!in_array($val, $noduplicate)) {
+                            $errors[] = "Duplicated products have been chosen.";
+                            unset($product_id[$key]);
+                            unset($quantity[$key]);
+                        }
+                    }
+                }
+
+                // Check if any errors occurred
+                if (!empty($errors)) {
+                    $errorMessage = "<div class='alert alert-danger'>";
+                    foreach ($errors as $error) {
+                        $errorMessage .= $error . "<br>";
+                    }
+                    $errorMessage .= "</div>";
+                    echo $errorMessage;
+                } else {
+                    // Update order summary 
+                    $update_summary_query = "UPDATE order_summary SET order_date=:order_date WHERE order_id=:id";
+                    // Prepare query for execution
+                    $update_summary_stmt = $con->prepare($update_summary_query);
+                    // Bind the parameters and execute
+                    $update_summary_stmt->bindParam(":order_date", $existing_order_date);
+                    $update_summary_stmt->bindParam(":id", $id);
+                    $update_summary_stmt->execute();
+
+                    // Delete existing order details
+                    $delete_details_query = "DELETE FROM order_details WHERE order_id=:id";
+                    $delete_details_stmt = $con->prepare($delete_details_query);
+                    $delete_details_stmt->bindParam(":id", $id);
+                    $delete_details_stmt->execute();
+
+                    // Insert updated order details into the order_details table
+                    $insert_details_query = "INSERT INTO order_details SET order_id=:order_id, product_id=:product_id, quantity=:quantity";
+
+
+                    for ($i = 0; $i < count($product_id); $i++) {
+                        $stmt_details = $con->prepare($insert_details_query);
+                        $stmt_details->bindParam(':order_id', $id);
+                        $stmt_details->bindParam(':product_id', $product_id[$i]);
+                        $stmt_details->bindParam(':quantity', $quantity[$i]);
+                        $stmt_details->execute();
+                    }
+                    echo "<div class='alert alert-success'>Order updated successfully.</div>";
+                }
+                $selected_product = isset($noduplicate) ? count($noduplicate) : count($product_id);
+            }
+            // show error
+            catch (PDOException $exception) {
+                echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
             }
         }
+
         ?>
 
         <!--HTML form to update record will be here -->
@@ -182,7 +184,7 @@ include 'menu/input_disabled.php';
                     <td class="text-center">1</td>
                     <td class="d-flex">
 
-                        <select name="product_id[]" class="form-select form-select-lg mb-3 col" <?php echo $inputDisabled; ?>>
+                        <select name="product_id[]" class="form-select form-select-lg mb-3 col">
                             <option value="" selected hidden>Please select a product</option>
                             <?php
                             // 下拉菜单的选项
@@ -196,8 +198,8 @@ include 'menu/input_disabled.php';
                             ?>
                         </select>
                     </td>
-                    <td><input type="number" class="form-select form-select-lg mb-3" name="quantity[]" <?php echo $inputDisabled; ?> /></td>
-                    <td><input href='#' onclick='deleteRow(this)' class='btn d-flex justify-content-center btn-danger mt-1' value="Delete" <?php echo $inputDisabled; ?> /></td>
+                    <td><input type="number" class="form-select form-select-lg mb-3" name="quantity[]" /></td>
+                    <td><input href='#' onclick='deleteRow(this)' class='btn d-flex justify-content-center btn-danger mt-1' value="Delete" /></td>
 
                 </tr>
                 <tr>
@@ -205,7 +207,7 @@ include 'menu/input_disabled.php';
 
                     </td>
                     <td colspan="4">
-                        <input type="button" value="Add More Product" class="btn btn-success add_one" <?php echo $inputDisabled; ?> />
+                        <input type="button" value="Add More Product" class="btn btn-success add_one" />
                     </td>
                 </tr>
             </table>
@@ -213,7 +215,7 @@ include 'menu/input_disabled.php';
                 <tr>
                     <td></td>
                     <td>
-                        <input type='submit' value='Update order' class='btn btn-primary' <?php echo $inputDisabled; ?> />
+                        <input type='submit' value='Update order' class='btn btn-primary' />
                         <a href='order_read.php' class='btn btn-danger'>Back to read order</a>
                     </td>
                 </tr>

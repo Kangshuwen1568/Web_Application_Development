@@ -1,6 +1,6 @@
 <?php
 include 'menu/validate_login.php';
-include 'menu/input_disabled.php';
+
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -25,63 +25,60 @@ include 'menu/input_disabled.php';
 
         <!-- PHP insert code will be here -->
         <?php
-        if ($customer_status == 'inactive') {
-            echo "<div class='alert alert-danger'>Your account is inactive. Your account does not have permission.</div>";
-        } else {
-            if ($_POST) {
-                // include database connection
-                include 'config/database.php';
+        if ($_POST) {
+            // include database connection
+            include 'config/database.php';
 
-                $category_name = $_POST['category_name'];
-                $description = $_POST['description'];
+            $category_name = $_POST['category_name'];
+            $description = $_POST['description'];
 
-                // initialize an array to store error messages
-                $errors = array();
+            // initialize an array to store error messages
+            $errors = array();
 
-                // check name field is empty
-                if (empty($category_name)) {
-                    $errors[] = "Category Name is required.";
+            // check name field is empty
+            if (empty($category_name)) {
+                $errors[] = "Category Name is required.";
+            }
+
+            // check description field is empty
+            if (empty($description)) {
+                $errors[] = "Description is required.";
+            }
+
+            // check if any errors occurred
+            if (!empty($errors)) {
+                $errorMessage = "<div class='alert alert-danger'>";
+                // display out the error messages
+                foreach ($errors as $error) {
+                    $errorMessage .= $error . "<br>";
                 }
+                $errorMessage .= "</div>";
+                echo $errorMessage;
+            } else {
+                try {
+                    // insert query
+                    $query = "INSERT INTO categories SET category_name=:category_name, description=:description";
+                    // prepare query for execution
+                    $stmt = $con->prepare($query);
 
-                // check description field is empty
-                if (empty($description)) {
-                    $errors[] = "Description is required.";
+                    // bind the parameters
+                    $stmt->bindParam(':category_name', $category_name);
+                    $stmt->bindParam(':description', $description);
+
+                    // Execute the query
+                    if ($stmt->execute()) {
+                        echo "<div class='alert alert-success'>Record was saved.</div>";
+                    } else {
+                        echo "<div class='alert alert-danger'>Unable to save record.</div>";
+                    }
                 }
-
-                // check if any errors occurred
-                if (!empty($errors)) {
-                    $errorMessage = "<div class='alert alert-danger'>";
-                    // display out the error messages
-                    foreach ($errors as $error) {
-                        $errorMessage .= $error . "<br>";
-                    }
-                    $errorMessage .= "</div>";
-                    echo $errorMessage;
-                } else {
-                    try {
-                        // insert query
-                        $query = "INSERT INTO categories SET category_name=:category_name, description=:description";
-                        // prepare query for execution
-                        $stmt = $con->prepare($query);
-
-                        // bind the parameters
-                        $stmt->bindParam(':category_name', $category_name);
-                        $stmt->bindParam(':description', $description);
-
-                        // Execute the query
-                        if ($stmt->execute()) {
-                            echo "<div class='alert alert-success'>Record was saved.</div>";
-                        } else {
-                            echo "<div class='alert alert-danger'>Unable to save record.</div>";
-                        }
-                    }
-                    // show error
-                    catch (PDOException $exception) {
-                        die('ERROR: ' . $exception->getMessage());
-                    }
+                // show error
+                catch (PDOException $exception) {
+                    die('ERROR: ' . $exception->getMessage());
                 }
             }
         }
+
         ?>
 
         <!-- html form here where the product information will be entered -->
@@ -89,16 +86,16 @@ include 'menu/input_disabled.php';
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Category Name</td>
-                    <td><input type='text' name='category_name' class='form-control' <?php echo $inputDisabled; ?> /></td>
+                    <td><input type='text' name='category_name' class='form-control' value="<?php echo isset($_POST['category_name']) ? htmlspecialchars($_POST['category_name']) : ''; ?>" /></td>
                 </tr>
                 <tr>
                     <td>Description</td>
-                    <td><input type='text' name='description' class='form-control' <?php echo $inputDisabled; ?> /></td>
+                    <td><input type='text' name='description' class='form-control' value="<?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?>" /></td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>
-                        <input type='submit' value='Save' class='btn btn-primary' <?php echo $inputDisabled; ?> />
+                        <input type='submit' value='Save' class='btn btn-primary' />
                         <a href='category_read.php' class='btn btn-danger'>Back to read categories</a>
                     </td>
                 </tr>

@@ -59,15 +59,20 @@ session_start();
                         $errors[] = "Username/email not found.";
                     }
                 } else {
-                    // Check if the entered password matches the hashed password from the database
-                    if (!password_verify($password, $row['password'])) {
-                        // Incorrect password
-                        $errors[] = "Incorrect password.";
+                    // Check if the account is active
+                    if ($row['account_status'] === 'inactive') {
+                        $errors[] = "Your account is inactive. You cannot log in.";
                     } else {
-                        // Login successful
-                        $_SESSION['username'] = $row['username'];
-                        header("Location: index.php");
-                        exit();
+                        // Check if the entered password matches the hashed password from the database
+                        if (!password_verify($password, $row['password'])) {
+                            // Incorrect password
+                            $errors[] = "Incorrect password.";
+                        } else {
+                            // Login successful
+                            $_SESSION['username'] = $row['username'];
+                            header("Location: index.php");
+                            exit();
+                        }
                     }
                 }
             } catch (PDOException $exception) { // show error

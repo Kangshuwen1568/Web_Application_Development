@@ -1,6 +1,5 @@
 <?php
 include 'menu/validate_login.php';
-include 'menu/input_disabled.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -78,21 +77,43 @@ include 'menu/input_disabled.php';
 
         <!-- PHP post to update record will be here -->
         <?php
-        if ($customer_status == 'inactive') {
-            echo "<div class='alert alert-danger'>Your account is inactive. Your account does not have permission.</div>";
-        } else {
-            // check if form was submitted
-            if ($_POST) {
-                try {
-                    // write update query
-                    // in this case, it seemed like we have so many fields to pass and
-                    // it is better to label them and not use question marks
-                    $query = "UPDATE categories SET category_name=:category_name, description=:description WHERE id = :id";
-                    // prepare query for excecution
-                    $stmt = $con->prepare($query);
-                    // posted values
-                    $name = htmlspecialchars(strip_tags($_POST['category_name']));
-                    $description = htmlspecialchars(strip_tags($_POST['description']));
+        // check if form was submitted
+        if ($_POST) {
+            try {
+                // write update query
+                // in this case, it seemed like we have so many fields to pass and
+                // it is better to label them and not use question marks
+                $query = "UPDATE categories SET category_name=:category_name, description=:description WHERE id = :id";
+                // prepare query for excecution
+                $stmt = $con->prepare($query);
+                // posted values
+                $category_name = htmlspecialchars(strip_tags($_POST['category_name']));
+                $description = htmlspecialchars(strip_tags($_POST['description']));
+
+                // initialize an array to store error messages
+                $errors = array();
+
+                // check name field is empty
+                if (empty($category_name)) {
+                    $errors[] = "Category Name is required.";
+                }
+
+                // check description field is empty
+                if (empty($description)) {
+                    $errors[] = "Description is required.";
+                }
+
+                // check if any errors occurred
+                if (!empty($errors)) {
+                    $errorMessage = "<div class='alert alert-danger'>";
+                    // display out the error messages
+                    foreach ($errors as $error) {
+                        $errorMessage .= $error . "<br>";
+                    }
+                    $errorMessage .= "</div>";
+                    echo $errorMessage;
+                } else {
+
                     // bind the parameters
                     $stmt->bindParam(':category_name', $category_name);
                     $stmt->bindParam(':description', $description);
@@ -104,12 +125,13 @@ include 'menu/input_disabled.php';
                         echo "<div class='alert alert-danger'>Unable to update record. Please try again.</div>";
                     }
                 }
-                // show errors
-                catch (PDOException $exception) {
-                    die('ERROR: ' . $exception->getMessage());
-                }
+            }
+            // show errors
+            catch (PDOException $exception) {
+                die('ERROR: ' . $exception->getMessage());
             }
         }
+
         ?>
 
 
@@ -119,17 +141,17 @@ include 'menu/input_disabled.php';
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Category Name</td>
-                    <td><input type='text' name='category_name' value="<?php echo htmlspecialchars($category_name, ENT_QUOTES);  ?>" class='form-control' <?php echo $inputDisabled; ?> /></td>
+                    <td><input type='text' name='category_name' value="<?php echo htmlspecialchars($category_name, ENT_QUOTES);  ?>" class='form-control' /></td>
                 </tr>
                 <tr>
                     <td>Description</td>
-                    <td><textarea name='description' class='form-control' <?php echo $inputDisabled; ?>><?php echo htmlspecialchars($description, ENT_QUOTES); ?></textarea></td>
+                    <td><textarea name='description' class='form-control'><?php echo htmlspecialchars($description, ENT_QUOTES); ?></textarea></td>
 
                 </tr>
                 <tr>
                     <td></td>
                     <td>
-                        <input type='submit' value='Save Changes' class='btn btn-primary' <?php echo $inputDisabled; ?> />
+                        <input type='submit' value='Save Changes' class='btn btn-primary' />
                         <a href='category_read.php' class='btn btn-danger'>Back to read category</a>
                     </td>
                 </tr>

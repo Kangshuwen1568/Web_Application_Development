@@ -148,7 +148,7 @@ include 'menu/validate_login.php';
             </div>
 
             <div class="col border border-dark border-3 p-5 text-center">
-                <h2 class="mb-3">3 Products Never Purchased</h2>
+                <h2 class="mb-3">Products Never Purchased</h2>
                 <?php
                 $no_purchased_product_query = "SELECT id, name FROM products WHERE NOT EXISTS(SELECT product_id FROM order_details WHERE order_details.product_id = products.id)";
                 $no_purchased_product_stmt = $con->prepare($no_purchased_product_query);
