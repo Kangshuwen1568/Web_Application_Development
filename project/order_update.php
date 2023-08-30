@@ -199,7 +199,8 @@ include 'menu/validate_login.php';
                         </select>
                     </td>
                     <td><input type="number" class="form-select form-select-lg mb-3" name="quantity[]" /></td>
-                    <td><input href='#' onclick='deleteRow(this)' class='btn d-flex justify-content-center btn-danger mt-1' value="Delete" /></td>
+
+                    <td><button onclick='deleteRow(this)' class='btn d-flex justify-content-center btn-danger mt-1'>Delete</button></td>
 
                 </tr>
                 <tr>

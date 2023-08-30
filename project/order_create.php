@@ -3,6 +3,17 @@ include 'menu/validate_login.php';
 include 'config/database.php';
 
 $currentDate = date('Y-m-d');
+
+// Fetch the customer_id based on the logged-in username
+$query = "SELECT id FROM customers WHERE username = :username";
+$stmt = $con->prepare($query);
+$stmt->bindParam(':username', $_SESSION['username']);
+$stmt->execute();
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$customer_id = $row['id'];
+
+// Store the customer_id in the session
+$_SESSION['customer_id'] = $customer_id;
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -42,6 +53,7 @@ $currentDate = date('Y-m-d');
         if ($_POST) {
             try {
                 //$customer_id = $_POST['customer_id'];
+                //$customer_id = $_SESSION['customer_id'];
                 $order_date = $_POST['order_date'];
 
                 $product_id = $_POST['product_id'];
@@ -145,7 +157,10 @@ $currentDate = date('Y-m-d');
             <table class='table table-hover table-responsive table-bordered'>
                 <tr>
                     <td>Customer Name</td>
-                    <td><input type="text" name="customer_name" id="customer_name" class="form-control" value="<?php echo $_SESSION['username']; ?>" readonly /></td>
+                    <td>
+                        <input type="text" name="customer_name" id="customer_name" class="form-control" value="<?php echo $_SESSION['username']; ?>" readonly />
+
+                    </td>
                 </tr>
             </table>
 
@@ -174,8 +189,8 @@ $currentDate = date('Y-m-d');
                         </select>
                     </td>
                     <td><input type="number" class="form-select form-select-lg mb-3" name="quantity[]" aria-label=".form-select-lg example" /></td>
-                    <td><input href='#' onclick='deleteRow(this)' class='btn d-flex justify-content-center btn-danger mt-1' value="Delete" /></td>
-
+                    <!--<td><input href='#' onclick='deleteRow(this)' class='btn d-flex justify-content-center btn-danger mt-1' value="Delete" /></td>-->
+                    <td><button onclick='deleteRow(this)' class='btn d-flex justify-content-center btn-danger mt-1'>Delete</button></td>
                 </tr>
                 <tr>
                     <td>
@@ -195,7 +210,7 @@ $currentDate = date('Y-m-d');
                     <td></td>
                     <td>
 
-                        <input type='submit' value='Place' class='btn btn-primary' />
+                        <input type='submit' value='Place Order' class='btn btn-primary' />
 
                         <a href='order_read.php' class='btn btn-danger'>Back to read order</a>
                     </td>
