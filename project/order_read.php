@@ -104,7 +104,7 @@ include 'menu/validate_login.php';
                 echo "<td class='text-end'>RM" . number_format($total_amount, 2) . "</td>";
                 echo "<td class='col-2'>";
                 // read one record
-                echo "<a href='order_detail_read.php?id={$order_id}' class='btn btn-info m-r-1em'>Read</a>";
+                //echo "<a href='order_detail_read.php?id={$order_id}' class='btn btn-info m-r-1em'>Read</a>";
                 // we will use this links on next part of this post
                 echo "<a href='order_update.php?id={$order_id}' class='btn btn-primary m-r-1em mx-1'>Edit</a>";
                 // we will use this links on next part of this post
